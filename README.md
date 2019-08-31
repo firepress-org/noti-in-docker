@@ -55,7 +55,7 @@ devmtl/rclone:latest
 <br>
 
 
-# How to using
+# How to use it
 
 This example is the send messages to a slack channel.
 
