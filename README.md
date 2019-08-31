@@ -1,4 +1,5 @@
-# noti-in-docker
+# [noti-in-docker](https://github.com/firepress-org/noti-in-docker)
+
 Using best practices: rebuild everyday, multi-stage builds, non-root, upx, labels, alpine, etc
 
 # [noti](https://github.com/variadico/noti/blob/master/docs/noti.md)
@@ -22,7 +23,7 @@ noti in a docker container using CI (continuous integration).
 
 ## About noti
 
-Monitor a process and trigger a notification.
+[Noti](https://github.com/variadico/noti/) let you trigger a notifications.
 
 Never sit and wait for some long-running process to finish. Noti can alert you when it's done. You can receive messages on your computer or phone.
 
