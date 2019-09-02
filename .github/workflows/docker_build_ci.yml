@@ -133,7 +133,7 @@ jobs:
           DOCKERHUB_USERNAME: $(cat DOCKERHUB_USER)
           DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
           DOCKERHUB_REPOSITORY: $(cat DOCKERHUB_USER)/$(cat APP_NAME)
-          README_FILEPATH: ./README.md
+          #README_FILEPATH: ./subdir/README.md
 
   Job3:
     needs: job1
