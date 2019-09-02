@@ -63,17 +63,17 @@ jobs:
           #
           # build for Github Package Registry (GPR)
 
-      - name: Test image with docker-library
-        run: |
-          git clone https://github.com/docker-library/official-images.git official-images
-          official-images/test/run.sh $(cat TAG_UAT)
+      #- name: Test image with docker-library
+      #  run: |
+      #    git clone https://github.com/docker-library/official-images.git official-images
+      #    official-images/test/run.sh $(cat TAG_UAT)
 
-      - name: Test image with Aquasec microscanner
-        run: |
-          wget --retry-connrefused --waitretry=1 --read-timeout=5 --timeout=5 --tries=10 https://raw.githubusercontent.com/lukebond/microscanner-wrapper/master/scan.sh && chmod +x scan.sh
-          #
-          echo "The build will stop only if it finds a critical issue"
-          docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest -q --exit-code 1 --severity CRITICAL $(cat TAG_UAT)
+      #- name: Test image with Aquasec microscanner
+      #  run: |
+      #    wget --retry-connrefused --waitretry=1 --read-timeout=5 --timeout=5 --tries=10 https://raw.githubusercontent.com/lukebond/microscanner-wrapper/master/scan.sh && chmod +x scan.sh
+      #    #
+      #    echo "The build will stop only if it finds a critical issue"
+      #    docker run --rm -v /var/run/docker.sock:/var/run/docker.sock aquasec/trivy:latest -q --exit-code 1 --severity CRITICAL $(cat TAG_UAT)
 
       - name: Logs / All tags & variables
         run: |
