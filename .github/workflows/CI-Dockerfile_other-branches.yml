@@ -63,8 +63,12 @@ jobs:
           #
           # build for Github Package Registry (GPR)
 
-      # bypass / Test image with docker-library
-      # bypass / Test image with Aquasec microscanner
+      - name: Test image with docker-library
+        run: |
+          git clone --depth 1 https://github.com/docker-library/official-images.git official-images
+          official-images/test/run.sh $(cat TAG_UAT)
+
+      # bypassed / Test image with Aquasec microscanner
 
       - name: Logs / All tags & variables
         run: |
