@@ -1,5 +1,8 @@
 # The beauty of this CI setup is that it will build any valid DOCKERFILE by setting a few variables.
 # See how at https://github.com/firepress-org/rclone-in-docker/blob/master/README-CI.md
+# Requires secrets on github: DOCKERHUB_PASSWORD, TOKEN_SLACK
+# Update DOCKERFILE_NAME if you are using a special Dockerfile name
+# The way we define variables is a hack. See why: https://bit.ly/2ZEAt6u
 #
 # GNU v3 | Please credit the author if you are re-using some of it :-p
 # by Pascal Andy | https://pascalandy.com/blog/now/
@@ -24,9 +27,6 @@ jobs:
     steps:
       - uses: actions/checkout@master
 
-      # Requires secrets on github: DOCKERHUB_PASSWORD, TOKEN_SLACK
-      # Update DOCKERFILE_NAME if you are using a special Dockerfile name
-      # The way we define variables is a hack. See why: https://bit.ly/2ZEAt6u
       - name: Define variables
         run: |
           echo "Dockerfile" > DOCKERFILE_NAME
