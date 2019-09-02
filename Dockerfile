@@ -1,5 +1,11 @@
+# Those are required by Github Action CI
 ARG VERSION="3.2.0"
 ARG APP_NAME="noti"
+ARG DOCKERHUB_USER="devmtl"
+ARG GITHUB_USER="firepress"
+ARG GITHUB_ORG="firepress-org"
+ARG GITHUB_REGISTRY="registry"
+#
 ARG USER="onfire"
 ARG ALPINE_VERSION="3.10"
 ARG GIT_REPO_DOCKERFILE="https://github.com/firepress-org/noti-in-docker"
