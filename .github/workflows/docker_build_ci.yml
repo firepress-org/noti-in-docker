@@ -126,14 +126,16 @@ jobs:
         run: |
           echo "devmtl" > DOCKERHUB_USER
           cat Dockerfile | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g' > APP_NAME
-      
-      - name: Update Docker Hub Description
-        uses: peter-evans/dockerhub-description@v2.0.0
-        env:
-          DOCKERHUB_USERNAME: $(cat DOCKERHUB_USER)
-          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
-          DOCKERHUB_REPOSITORY: $(cat DOCKERHUB_USER)/$(cat APP_NAME)
-          #README_FILEPATH: ./subdir/README.md
+          #
+          # does not work
+          #
+      #- name: Update Docker Hub Description
+      #  uses: peter-evans/dockerhub-description@v2.0.0
+      #  env:
+      #    DOCKERHUB_USERNAME: $(cat DOCKERHUB_USER)
+      #    DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      #    DOCKERHUB_REPOSITORY: $(cat DOCKERHUB_USER)/$(cat APP_NAME)
+      #    #README_FILEPATH: ./subdir/README.md
 
   Job3:
     needs: job1
