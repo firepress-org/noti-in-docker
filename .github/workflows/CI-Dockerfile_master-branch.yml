@@ -7,7 +7,7 @@
 # GNU v3 | Please credit the author if you are re-using some of it :-p
 # by Pascal Andy | https://pascalandy.com/blog/now/
 
-name: CI Dockerfile (master branch)
+name: CI-Dockerfile_master-branch
 on:
   push:
     branches:
