@@ -126,16 +126,14 @@ jobs:
         run: |
           echo "devmtl" > DOCKERHUB_USER
           cat Dockerfile | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g' > APP_NAME
-          echo "$(cat DOCKERHUB_USER)/$(cat APP_NAME)" > DOCKER_USER_APP
       
-      # Buggy at the moment :-(
-      #
-      #- name: Push Full Description on Dockerhub
-      #  uses: docker://mpepping/docker-hub-metadata-github-action
-      #  env:
-      #    IMAGE: $(cat DOCKER_USER_APP)
-      #    DOCKER_USERNAME: $(cat DOCKERHUB_USER)
-      #    DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+      - name: Update Docker Hub Description
+        uses: peter-evans/dockerhub-description@v2.0.0
+        env:
+          DOCKERHUB_USERNAME: $(cat DOCKERHUB_USER)
+          DOCKERHUB_PASSWORD: ${{ secrets.DOCKERHUB_PASSWORD }}
+          DOCKERHUB_REPOSITORY: $(cat DOCKERHUB_USER)/$(cat APP_NAME)
+          README_FILEPATH: ./README.md
 
   Job3:
     needs: job1
