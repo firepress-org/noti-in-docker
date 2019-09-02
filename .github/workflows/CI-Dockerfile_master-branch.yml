@@ -4,10 +4,11 @@
 # GNU v3 | Please credit the author if you are re-using some of it :-p
 # by Pascal Andy | https://pascalandy.com/blog/now/
 
-name: CI Dockerfile
+name: CI Dockerfile (master branch)
 on:
-  pull_request:
   push:
+    branches:
+      - master
   schedule:
     - cron: '0 8 * * *'
 jobs:
