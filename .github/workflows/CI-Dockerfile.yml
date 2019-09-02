@@ -4,13 +4,12 @@
 # GNU v3 | Please credit the author if you are re-using some of it :-p
 # by Pascal Andy | https://pascalandy.com/blog/now/
 
-name: docker_build_ci
+name: CI Dockerfile
 on:
   pull_request:
   push:
   schedule:
     - cron: '0 8 * * *'
-    # everyday at 8 am
 jobs:
 
   Job1:
@@ -151,13 +150,6 @@ jobs:
               NOTI_SLACK_CHANNEL="$SLACK_CHANNEL" \
               noti -k -m "$NOTI_MESSAGE" '
 
-      - name: Other ideas
+      - name: Github Actions ideas to implements
         run: |
-          echo " "
-          # rule/ if an app's version doesn't have a related tags on the git repo, push and commit a tag on github.
-          # rule/ Master branch = push 4 tag / if not master branch push only tag edge
-          # rule/ If anything fails on any jobs, send on notification to Slack
-          #
-          # Push a webhook to our cluster. The CD part of CI/CD"
-          #     ... SSH on node to do X"
-          #     ... for webapps, do an healthcheck in prod cluster"
+          echo "see —> https://gist.github.com/pascalandy/4e499b7c42023836a7d207277923fc09"
