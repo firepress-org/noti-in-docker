@@ -13,6 +13,8 @@ on:
     branches:
       - edge*
       - dev*
+      - tmp*
+      - temp*
       - patch*
       - pull*
       - test*
