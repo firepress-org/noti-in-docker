@@ -30,9 +30,9 @@ jobs:
           cat $(cat DOCKERFILE_NAME) | grep DOCKERHUB_USER= | head -n 1 | grep -o '".*"' | sed 's/"//g' > DOCKERHUB_USER
           cat $(cat DOCKERFILE_NAME) | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g' > APP_NAME
           cat $(cat DOCKERFILE_NAME) | grep VERSION= | head -n 1 | grep -o '".*"' | sed 's/"//g' > VERSION
-          cat $(cat DOCKERFILE_NAME) | grep GITHUB_USER= | head -n 1 | grep -o '".*"' | sed 's/"//g' > VERSION
-          cat $(cat DOCKERFILE_NAME) | grep GITHUB_ORG= | head -n 1 | grep -o '".*"' | sed 's/"//g' > VERSION
-          cat $(cat DOCKERFILE_NAME) | grep GITHUB_REGISTRY= | head -n 1 | grep -o '".*"' | sed 's/"//g' > VERSION
+          cat $(cat DOCKERFILE_NAME) | grep GITHUB_USER= | head -n 1 | grep -o '".*"' | sed 's/"//g' > GITHUB_USER
+          cat $(cat DOCKERFILE_NAME) | grep GITHUB_ORG= | head -n 1 | grep -o '".*"' | sed 's/"//g' > GITHUB_ORG
+          cat $(cat DOCKERFILE_NAME) | grep GITHUB_REGISTRY= | head -n 1 | grep -o '".*"' | sed 's/"//g' > GITHUB_REGISTRY
           #
           date -d "-4 hours" "+%Y-%m-%d_%HH%Ms%S" > DATE_IT
           git rev-parse --short HEAD > SHORT_COMMIT_HASH
@@ -60,7 +60,7 @@ jobs:
 
       - name: Test image with docker-library
         run: |
-          git clone https://github.com/docker-library/official-images.git official-images
+          git clone --depth 1 https://github.com/docker-library/official-images.git official-images
           official-images/test/run.sh $(cat TAG_UAT)
 
       - name: Test image with Aquasec microscanner
