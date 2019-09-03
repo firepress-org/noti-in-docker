@@ -7,7 +7,7 @@
 # A better class of script...
 set -o errexit          # Exit on most errors (see the manual)
 set -o errtrace         # Make sure any error trap is inherited
-set -o nounset          # Disallow expansion of unset variables
+#set -o nounset          # Disallow expansion of unset variables
 set -o pipefail         # Use last non-zero exit code in a pipeline
 #set -o xtrace          # Trace the execution of the script (debug)
 
@@ -443,7 +443,18 @@ function parse_params() {
         esac
     done
 }
+############################################################
+# main
+############################################################
+function set_vars {
+    if [[ -z "$2" ]]; then
+      input_2="null"
+    else
+      input_2="$2"
+    fi
 
+    input_1="$1"
+}
 ############################################################
 # main
 ############################################################
@@ -458,11 +469,10 @@ function main() {
     #parse_params "$@"
     cron_init
     colour_init
+    set_vars
     #lock_init system
-
-    input_1="$1"
-    input_2="$2"
     clear
+
     # run function
     $1
 }
