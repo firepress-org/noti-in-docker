@@ -460,8 +460,11 @@ function main() {
     colour_init
     #lock_init system
 
-    # this call the function we want
-    clear && $1
+    input_1="$1"
+    input_2="$2"
+    clear
+    # run function
+    $1
 }
 
 ############################################################
@@ -490,6 +493,17 @@ function edge {
 function check {
   git checkout
 }
+function test {
+  echo "${input_1} / ${input_2}"
+}
+function push {
+  git status && \
+  git add -A && \
+  git commit -m ${input_2} && \
+  git push
+}
+
+
 
 ############################################################
 # Entrypoint
