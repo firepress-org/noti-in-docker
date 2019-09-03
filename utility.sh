@@ -1,14 +1,13 @@
 #!/usr/bin/env bash
 
-#set -o nounset          # Disallow expansion of unset variables
-# --- Find bad variables by using `./utility.sh test two three`, else disable it
-# --- or remove $1, $2, $3 var defintions in @main
-
 set -o errexit          # Exit on most errors (see the manual)
 set -o errtrace         # Make sure any error trap is inherited
 set -o pipefail         # Use last non-zero exit code in a pipeline
 #set -o xtrace          # Trace the execution of the script (debug)
-
+#
+#set -o nounset          # Disallow expansion of unset variables
+# --- Find bad variables by using `./utility.sh test two three`, else disable it
+# --- or remove $1, $2, $3 var defintions in @main
 
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -28,6 +27,7 @@ function figlet {
 
   docker run --rm ${docker_image} ${message}
 }
+
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 # Git
@@ -108,6 +108,7 @@ function App_is_input2_empty {
     App_stop
   fi
 }
+
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 # OTHER
