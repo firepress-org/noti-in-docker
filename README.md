@@ -9,10 +9,10 @@ noti in a docker container using CI (continuous integration). It uses best pract
 - it uses **multi-stage** build
 - it uses **alpine** as final image
 - it runs as **non-root**
-- the app runs under[**tiny**](https://github.com/firepress-org/rclone-in-docker/blob/2090107a0ea3382bee3cd43548c5a1ab79b5e333/Dockerfile#L90)
+- the app runs under **tiny**
 - it push **four tags** to registry
 - it uses **Labels**
-- it compress the app with **[UPX](https://github.com/firepress-org/rclone-in-docker/blob/2090107a0ea3382bee3cd43548c5a1ab79b5e333/Dockerfile#L33)**
+- it compress the app with **UPX**
 - the docker image's size (uncompressed) is ~~ **13MB**
 
 <br>
@@ -36,7 +36,7 @@ At FirePress we use noti to keep track of backups, cron, critical error that cou
 ## Docker hub
 
 Always check on docker hub the most recent build:<br>
-[https://hub.docker.com/r/devmtl/rclone/tags](https://hub.docker.com/r/devmtl/noti/tags)
+https://hub.docker.com/r/devmtl/noti/tags
 
 You should use **this tag format** `$VERSION_$DATE_$HASH-COMMIT` in production.
 
