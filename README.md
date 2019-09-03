@@ -4,16 +4,19 @@ noti in a docker container using CI (continuous integration). It uses best pract
 
 **It features**:
 
-- it builds **everyday** and on every commits
-- it builds from the **go sources**
-- it uses **multi-stage** build
-- it uses **alpine** as final image
-- it runs as **non-root**
-- the app runs under **tiny**
-- it push **four tags** to registry
-- it uses **Labels**
-- it compress the app with **UPX**
-- the docker image's size (uncompressed) is ~~ **13MB**
+- an **everyday build** and on every commits
+- a build from the **sources**
+- a **multi-stage** build
+- an **alpine** base docker image
+- a **non-root** user
+- a PID 1 under **tiny**
+- a logic of **four docker tags** on master
+- a logic of **three docker tags** on edge
+- great **Labels**
+- a compressed binary using **UPX**
+- a **small footprint** docker image's size
+- **many scripts** to easily manage this project. Based on [bash-script-template](https://github.com/firepress-org/bash-script-template)
+- and maybe more…
 
 <br>
 
