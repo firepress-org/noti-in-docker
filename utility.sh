@@ -47,7 +47,7 @@ function check {
 }
 function ver {    # version
   App_is_input2_empty
-  tag_version=${input_2}
+  tag_version="${input_2}"
 
   echo "Do we need to first update CHANGELOG.md ?" sleep 5;
 
@@ -96,14 +96,14 @@ function push {
 
   git status && \
   git add -A && \
-  git commit -m ${input_2} && \
+  git commit -m "${input_2}" && \
   clear
   git push
 }
 
 function App_is_input2_empty {
-  if [[ -z ${input_2} ]]; then    #if empty
-    echo "Error: You must provid a Git message."
+  if [[ "${input_2}" == "not-set" ]]; then    #if empty
+    echo "ERROR: You must provid a Git message."
     echo '       example: ./utility.sh push "Add this great feature"'
     App_stop
   fi
