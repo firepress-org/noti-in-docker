@@ -3,18 +3,24 @@
 # by Pascal Andy | https://pascalandy.com/blog/now/
 set -eou
 
-docker_image="redcoolbeans/dockerlint"
-
-function fct_lint {
+function lint {
+  docker_image="redcoolbeans/dockerlint"
+  
   docker run -it --rm \
     -v $(pwd)/Dockerfile:/Dockerfile:ro \
     ${docker_image}
 }
 
+function tag {
+  echo "todo"
+}
+
 function main() {
   clear
-  fct_lint
+  $1
 }
 
 # --- Entrypoint
+# run example
+# ./utility lint
 main "$@"
