@@ -107,8 +107,8 @@ function push {
 
 function App_is_input2_empty {
   if [[ "${input_2}" == "not-set" ]]; then
-    echo "ERROR: You must provid a Git message."
-    echo '       example: ./utility.sh push "Add this great feature"'
+    echo -e "${col_pink} ERROR: You must provid a Git message."
+    echo -e "${col_pink}        ./utility.sh push ;Add this great feature; (use double quotes, not ;)"
     App_stop
   fi
 }
@@ -174,13 +174,13 @@ date_month="$(date +%Y-%m)-XX";
 
 #==============================================
 #	Define color for echo prompts:
-export col_std="\e[39m——>\e[39m"
-export col_grey="\e[39m——>\e[39m"
-export col_blue="\e[34m——>\e[39m"
-export col_pink="\e[35m——>\e[39m"
-export col_green="\e[36m——>\e[39m"
-export col_white="\e[97m——>\e[39m"
-export col_def="\e[39m"
+  export col_std="\e[39m——>\e[39m"
+  export col_grey="\e[39m——>\e[39m"
+  export col_blue="\e[34m——>\e[39m"
+  export col_pink="\e[35m——>\e[39m"
+  export col_green="\e[36m——>\e[39m"
+  export col_white="\e[97m——>\e[39m"
+  export col_def="\e[39m"
 }
 
 
@@ -203,11 +203,19 @@ function docs {
 
 function main() {
 
-  # input mgmt
+  trap script_trap_err ERR
+  trap script_trap_exit EXIT
+
+  # shellcheck source=.bashcheck.sh
+  source "$(dirname "${BASH_SOURCE[0]}")/.bashcheck.sh"
+
+  App_utility_vars
+
+  # input management
   input_1=$1
   if [[ -z "$1" ]]; then    #if empty
     clear
-    echo "Oups, you must provided at least one attribute."
+    echo -e "${col_pink} ERROR: You must provid at least one attribute."
     App_stop
   else
     input_1=$1
@@ -225,16 +233,10 @@ function main() {
     input_3=$3
   fi
 
-  # shellcheck source=.bashcheck.sh
-  source "$(dirname "${BASH_SOURCE[0]}")/.bashcheck.sh"
-
-  trap script_trap_err ERR
-  trap script_trap_exit EXIT
-
   script_init "$@"
   cron_init
   colour_init
-  App_utility_vars
+  
   #lock_init system
 
   clear
