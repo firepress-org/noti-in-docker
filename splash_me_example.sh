@@ -1,11 +1,11 @@
 #!/usr/bin/env bash
-#
+
 set -o errexit          # Exit on most errors (see the manual)
 set -o errtrace         # Make sure any error trap is inherited
 set -o nounset          # Disallow expansion of unset variables
 set -o pipefail         # Use last non-zero exit code in a pipeline
 #set -o xtrace          # Trace the execution of the script (debug)
-#
+
 # A better class of script (ABOVE)
 # A best practices Bash script template with many useful functions. This file
 # sources in the bulk of the functions from the source.sh file which it expects
@@ -13,9 +13,7 @@ set -o pipefail         # Use last non-zero exit code in a pipeline
 # modification are present in this file. This is a great combination if you're
 # writing several scripts! By pulling in the common functions you'll minimise
 # code duplication, as well as ease any potential updates to shared functions.
-#
-# GNU v3 | Please credit my work if you are re-using some of it :)
-# by Pascal Andy | https://pascalandy.com/blog/now/
+
 
 # DESC: Usage help
 # ARGS: None
@@ -57,11 +55,14 @@ function parse_params() {
     done
 }
 
+
 # DESC: Main control flow
 # ARGS: $@ (optional): Arguments provided to the script
 # OUTS: None
 function main() {
-    source "$(dirname "${BASH_SOURCE[0]}")/.shellcheck.sh"
+    # load config and variables for this project
+    source "$(dirname "${BASH_SOURCE[0]}")/config_and_vars.sh"
+    source "$(dirname "${BASH_SOURCE[0]}")/shellcheck.sh"
 
     trap script_trap_err ERR
     trap script_trap_exit EXIT
@@ -70,38 +71,37 @@ function main() {
     parse_params "$@"
     cron_init
     colour_init
+    #lock_init system
 
-    # this call the function we want
-    clear && $1
+    goto_myscript
 }
-############################################################
-# linter
-############################################################
-function lint {
-  docker_image="redcoolbeans/dockerlint"
-  
-  docker run -it --rm \
-    -v $(pwd)/Dockerfile:/Dockerfile:ro \
-    ${docker_image}
-}
+##
+	##
+		##
+		  #
+		 # #
+		#   #
+function goto_myscript() {
 
-############################################################
-# git functions
-############################################################
-function hash {
-  git rev-parse --short HEAD
+    # this requires docker on your machine
+    docker run --rm ${IMG_figlet} Hey splash!
+
 }
-function master {
-  git checkout master
-}
-function edge {
-  git checkout edge
-}
-function check {
-  git checkout
+##
+	##
+		##
+		  #
+		 # #
+		#   #
+function this() {
+
+    echo "this is it"
+
 }
 
-############################################################
-# Entrypoint
-############################################################
+
+# --- Entrypoint
 main "$@"
+
+# by Pascal Andy | https://pascalandy.com/
+# https://github.com/pascalandy/bash-script-template
