@@ -236,7 +236,6 @@ function main() {
   script_init "$@"
   cron_init
   colour_init
-  
   #lock_init system
 
   clear
