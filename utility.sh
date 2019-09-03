@@ -102,7 +102,7 @@ function push {
 }
 
 function App_is_input2_empty {
-  if [[ "${input_2}" == "not-set" ]]; then    #if empty
+  if [[ "${input_2}" == "not-set" ]]; then
     echo "ERROR: You must provid a Git message."
     echo '       example: ./utility.sh push "Add this great feature"'
     App_stop
