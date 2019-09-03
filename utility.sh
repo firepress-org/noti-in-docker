@@ -1,95 +1,19 @@
 #!/usr/bin/env bash
 
-# A best practices Bash script template with many useful functions. This file
-# sources in the bulk of the functions from the .bashcheck.sh file which it expects
-# to be in the same directory. Only those functions which are likely to need
-# modification are present in this file. This is a great combination if you're
-# writing several scripts! By pulling in the common functions you'll minimise
-# code duplication, as well as ease any potential updates to shared functions.
+#set -o nounset          # Disallow expansion of unset variables
+# --- Find bad variables by using `./utility.sh test two three`, else disable it
+# --- or remove $1, $2, $3 var defintions in @main
 
-# A better class of script...
 set -o errexit          # Exit on most errors (see the manual)
 set -o errtrace         # Make sure any error trap is inherited
-#set -o nounset          # Disallow expansion of unset variables
 set -o pipefail         # Use last non-zero exit code in a pipeline
 #set -o xtrace          # Trace the execution of the script (debug)
 
-# DESC: Usage help
-# ARGS: None
-# OUTS: None
-function script_usage() {
-    cat << EOF
-Usage:
-     -h|--help                  Displays this help
-     -v|--verbose               Displays verbose output
-    -nc|--no-colour             Disables colour output
-    -cr|--cron                  Run silently unless we encounter an error
-EOF
-}
 
 
-# DESC: Parameter parser
-# ARGS: $@ (optional): Arguments provided to the script
-# OUTS: Variables indicating command-line parameters and options
-function parse_params() {
-    local param
-    while [[ $# -gt 0 ]]; do
-        param="$1"
-        shift
-        case $param in
-            -h|--help)
-                script_usage
-                exit 0
-                ;;
-            -v|--verbose)
-                verbose=true
-                ;;
-            -nc|--no-colour)
-                no_colour=true
-                ;;
-            -cr|--cron)
-                cron=true
-                ;;
-            *)
-                script_exit "Invalid parameter was provided: $param" 2
-                ;;
-        esac
-    done
-}
-
-
-# DESC: Main control flow
-# ARGS: $@ (optional): Arguments provided to the script
-# OUTS: None
-function main() {
-  # shellcheck source=.bashcheck.sh
-  source "$(dirname "${BASH_SOURCE[0]}")/.bashcheck.sh"
-
-  trap script_trap_err ERR
-  trap script_trap_exit EXIT
-
-  script_init "$@"
-  #parse_params "$@"
-  cron_init
-  colour_init
-  #lock_init system
-
-  # input mgmt
-    input_1=$1
-    if [[ -z "$2" ]]; then
-      input_2="not-set"
-    else
-      input_2=$2
-    fi
-    if [[ -z "$3" ]]; then
-      input_3="not-set"
-    else
-      input_3=$3
-    fi
-
-  $1
-}
-
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# DOCKER
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 function lint {
   docker_image="redcoolbeans/dockerlint"
 
@@ -98,8 +22,16 @@ function lint {
     ${docker_image}
 }
 
-###___###___###___###___###___###___###___###___###___###___###___###
-# git functions
+function figlet {
+  docker_image="devmtl/figlet:1.0"
+  message="Hey figlet"
+
+  docker run --rm ${docker_image} ${message}
+}
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# Git
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
 function hash {
   git rev-parse --short HEAD
@@ -113,8 +45,55 @@ function edge {
 function check {
   git checkout
 }
+function ver {    # version
+  App_is_input2_empty
+  tag_version="${input_2}"
 
+  echo "Do we need to first update CHANGELOG.md ?" sleep 5;
+
+  sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"$tag_version\"/" Dockerfile 
+
+  git add . && \
+  git commit -m "Updated to version: $tag_version" && \
+  git push && \
+  sleep 1 && \
+  # push tag
+  git tag ${tag_version} && \
+  git push --tags && \
+
+  echo "Then, execute: release";
+  
+  # vars
+  #GITHUB_TOKEN="3122133122133211233211233211233211322313123"
+  #local_repo="$Users/.../docker-stack-this"
+
+  # Find the latest tag
+  tag_version="$(git tag --sort=-creatordate | head -n1)" && \
+  echo ${tag_version} && \
+
+  user="firepress-org"
+  git_repo="ghostfire"
+  GOPATH=$(go env GOPATH)
+
+  # Requires https://github.com/aktau/github-release
+  $GOPATH/bin/github-release release \
+    --user ${user} \
+    --repo ${git_repo} \
+    --tag ${tag_version} \
+    --name ${tag_version} \
+    --description "Refer to [CHANGELOG.md](https://github.com/firepress-org/ghostfire/blob/master/CHANGELOG.md) for details about this release."
+
+}
+function version {
+  ver
+}
+function tag {
+  echo "Look for 'ver' instead."
+}
 function push {
+
+  App_is_input2_empty
+
   git status && \
   git add -A && \
   git commit -m "${input_2}" && \
@@ -122,15 +101,88 @@ function push {
   git push
 }
 
+function App_is_input2_empty {
+  if [[ -z "$2" ]]; then    #if empty
+    echo "Error: You must provid a Git message."
+    echo '       example: ./utility.sh push "Add this great feature"'
+    App_stop
+  fi
+}
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# OTHER
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+
 function test {
-  echo "\$1 is now $input_1"
-  echo "\$2 is now $input_2"
-  echo "\$3 is now $input_3"
+  echo "\$1 is now ${input_1}"
+  echo "\$2 is now ${input_2}"
+  echo "\$3 is now ${input_3}"
+  # Useful when trying to find bad variables along 'set -o nounset'
 }
 
-function test2 {
-  echo "$1 / $2"
+function App_stop {
+  echo && exit 1
 }
 
-# Entrypoint
+function doc {
+cat << EOF
+  Doc (documentation):
+
+  This text is used as a placeholder. Words that will follow won't
+  make any sense and this is fine. At the moment, the goal is to 
+  build a structure for our site.
+
+  Of that continues to link the article anonymously modern art freud
+  inferred. Eventually primitive brothel scene with a distinction. The
+  Enlightenment criticized from the history.
+EOF
+}
+function docs { 
+  doc
+}
+
+function main() {
+
+  # input mgmt
+  input_1=$1
+  if [[ -z "$1" ]]; then    #if empty
+    clear
+    echo "Oups, you must provided at least one attribute."
+    App_stop
+  else
+    input_1=$1
+  fi
+
+  if [[ -z "$2" ]]; then    #if empty
+    input_2="not-set"
+  else
+    input_2=$2
+  fi
+
+  if [[ -z "$3" ]]; then    #if empty
+    input_3="not-set"
+  else
+    input_3=$3
+  fi
+
+  # shellcheck source=.bashcheck.sh
+  source "$(dirname "${BASH_SOURCE[0]}")/.bashcheck.sh"
+
+  trap script_trap_err ERR
+  trap script_trap_exit EXIT
+
+  script_init "$@"
+  cron_init
+  colour_init
+  #lock_init system
+
+  clear
+  $1
+}
+
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# ENTRYPOINT
+### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 main "$@"
+echo && pwd && echo
+# https://github.com/firepress-org/bash-script-template
