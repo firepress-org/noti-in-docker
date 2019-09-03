@@ -1,16 +1,11 @@
 #!/usr/bin/env bash
-# For humans: the script starts at line 448.
 
 # A best practices Bash script template with many useful functions. This file
-# combines the source.sh & script.sh files into a single script. If you want
-# your script to be entirely self-contained then this should be what you want!
-
-# A better class of script...
-set -o errexit          # Exit on most errors (see the manual)
-set -o errtrace         # Make sure any error trap is inherited
-set -o pipefail         # Use last non-zero exit code in a pipeline
-#set -o nounset          # Disallow expansion of unset variables
-#set -o xtrace          # Trace the execution of the script (debug)
+# is suitable for sourcing into other scripts and so only contains functions
+# which are unlikely to need modification. It omits the following functions:
+# - main()
+# - parse_params()
+# - script_usage()
 
 # DESC: Handler for unexpected errors
 # ARGS: $1 (optional): Exit code (defaults to 1)
@@ -58,6 +53,7 @@ function script_trap_err() {
     exit "$exit_code"
 }
 
+
 # DESC: Handler for exiting the script
 # ARGS: None
 # OUTS: None
@@ -77,6 +73,7 @@ function script_trap_exit() {
     # Restore terminal colours
     printf '%b' "$ta_none"
 }
+
 
 # DESC: Exit script with the given message
 # ARGS: $1 (required): Message to print on exit
@@ -101,6 +98,7 @@ function script_exit() {
     script_exit 'Missing required argument to script_exit()!' 2
 }
 
+
 # DESC: Generic script initialisation
 # ARGS: $@ (optional): Arguments provided to the script
 # OUTS: $orig_cwd: The current working directory when the script was run
@@ -116,7 +114,7 @@ function script_exit() {
 function script_init() {
     # Useful paths
     readonly orig_cwd="$PWD"
-    readonly script_path="${BASH_SOURCE[0]}"
+    readonly script_path="${BASH_SOURCE[1]}"
     readonly script_dir="$(dirname "$script_path")"
     readonly script_name="$(basename "$script_path")"
     readonly script_params="$*"
@@ -124,6 +122,7 @@ function script_init() {
     # Important to always set as we use it in the exit handler
     readonly ta_none="$(tput sgr0 2> /dev/null || true)"
 }
+
 
 # DESC: Initialise colour variables
 # ARGS: None
@@ -208,6 +207,7 @@ function colour_init() {
     fi
 }
 
+
 # DESC: Initialise Cron mode
 # ARGS: None
 # OUTS: $script_output: Path to the file stdout & stderr was redirected to
@@ -218,6 +218,7 @@ function cron_init() {
         exec 3>&1 4>&2 1>"$script_output" 2>&1
     fi
 }
+
 
 # DESC: Acquire script lock
 # ARGS: $1 (optional): Scope of script execution lock (system or user)
@@ -243,6 +244,7 @@ function lock_init() {
         script_exit "Unable to acquire script lock: $lock_dir" 2
     fi
 }
+
 
 # DESC: Pretty print the provided string
 # ARGS: $1 (required): Message to print (defaults to a green foreground)
@@ -271,6 +273,7 @@ function pretty_print() {
     fi
 }
 
+
 # DESC: Only pretty_print() the provided string if verbose mode is enabled
 # ARGS: $@ (required): Passed through to pretty_print() function
 # OUTS: None
@@ -279,6 +282,7 @@ function verbose_print() {
         pretty_print "$@"
     fi
 }
+
 
 # DESC: Combines two path variables and removes any duplicates
 # ARGS: $1 (required): Path(s) to join with the second argument
@@ -311,6 +315,7 @@ function build_path() {
     # shellcheck disable=SC2034
     build_path="${new_path#:}"
 }
+
 
 # DESC: Check a binary exists in the search path
 # ARGS: $1 (required): Name of the binary to test for existence
@@ -366,6 +371,7 @@ function check_superuser() {
     return 0
 }
 
+
 # DESC: Run the requested command as root (via sudo if requested)
 # ARGS: $1 (optional): Set to zero to not attempt execution via sudo
 #       $@ (required): Passed through for execution as root user
@@ -390,120 +396,4 @@ function run_as_root() {
     fi
 }
 
-# DESC: Usage help
-# ARGS: None
-# OUTS: None
-function script_usage() {
-    cat << EOF
-Usage:
-     -h|--help                  Displays this help
-     -v|--verbose               Displays verbose output
-    -nc|--no-colour             Disables colour output
-    -cr|--cron                  Run silently unless we encounter an error
-EOF
-}
-
-# DESC: Parameter parser
-# ARGS: $@ (optional): Arguments provided to the script
-# OUTS: Variables indicating command-line parameters and options
-function parse_params() {
-    local param
-    while [[ $# -gt 0 ]]; do
-        param="$1"
-        shift
-        case $param in
-            -h|--help)
-                script_usage
-                exit 0
-                ;;
-            -v|--verbose)
-                verbose=true
-                ;;
-            -nc|--no-colour)
-                no_colour=true
-                ;;
-            -cr|--cron)
-                cron=true
-                ;;
-            *)
-                script_exit "Invalid parameter was provided: $param" 2
-                ;;
-        esac
-    done
-}
-
-###___###___###___###___###___###___###___###___###___###___###___###
-#  set_vars
-
-function set_vars {
-    if [[ -z "$2" ]]; then
-      input_2="null"
-    else
-      input_2="$2"
-    fi
-
-    input_1="$1"
-}
-
-###___###___###___###___###___###___###___###___###___###___###___###
-# main
-
-# DESC: Main control flow
-# ARGS: $@ (optional): Arguments provided to the script
-# OUTS: None
-function main() {
-    trap script_trap_err ERR
-    trap script_trap_exit EXIT
-
-    script_init "$@"
-    #parse_params "$@"
-    cron_init
-    colour_init
-    set_vars
-    #lock_init system
-    clear
-
-    # Run ours via an attribute
-    $1
-}
-
-###___###___###___###___###___###___###___###___###___###___###___###
-# linter
-
-function lint {
-  docker_image="redcoolbeans/dockerlint"
-
-  docker run -it --rm \
-    -v $(pwd)/Dockerfile:/Dockerfile:ro \
-    ${docker_image}
-}
-
-###___###___###___###___###___###___###___###___###___###___###___###
-# git functions
-
-function hash {
-  git rev-parse --short HEAD
-}
-function master {
-  git checkout master
-}
-function edge {
-  git checkout edge
-}
-function check {
-  git checkout
-}
-function test {
-  echo "${input_1} / ${input_2}"
-}
-function push {
-  git status && \
-  git add -A && \
-  git commit -m ${input_2} && \
-  clear
-  git push
-}
-
-###___###___###___###___###___###___###___###___###___###___###___###
-# Entrypoint
-main "$@"
+# vim: syntax=sh cc=80 tw=79 ts=4 sw=4 sts=4 et sr
