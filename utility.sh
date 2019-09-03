@@ -49,11 +49,20 @@ function diff {
   check && echo
   git diff
 }
-function ver {    # version
+function version {
+  # update version in Dockerfile
+  # update version on the latest commit
+  # push tag to remote
+  # release on github
+
   App_is_input2_empty
   tag_version="${input_2}"
 
-  echo "Do we need to first update CHANGELOG.md ?" sleep 5;
+  min=1 max=10 message="Was our CHANGELOG.md updated???"
+  for ACTION in $(seq ${min} ${max}); do
+    echo -e "${col_pink} ${message} ${col_pink}" && sleep 0.4 && clear && \
+    echo -e "${col_blue} ${message} ${col_blue}" && sleep 0.4 && clear
+	done
 
   sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"$tag_version\"/" Dockerfile 
 
@@ -64,32 +73,31 @@ function ver {    # version
   # push tag
   git tag ${tag_version} && \
   git push --tags && \
+  release
+}
+function release {
 
-  echo "Then, execute: release";
+  # Read variables from Dockerfile
+  git_user=$(cat Dockerfile | grep GITHUB_ORG= | head -n 1 | grep -o '".*"' | sed 's/"//g')
+  git_repo=$(cat Dockerfile | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g')
+  git_repo_url=$(cat Dockerfile | grep GIT_REPO_URL= | head -n 1 | grep -o '".*"' | sed 's/"//g')
   
-  # vars
-  #GITHUB_TOKEN="3122133122133211233211233211233211322313123"
-  #local_repo="$Users/.../docker-stack-this"
+  export GITHUB_TOKEN="$(cat ~/secrets_open/token_github/token.txt)"
+  tag_version="$(git tag --sort=-creatordate | head -n1)"
+  gopath=$(go env GOPATH)
 
-  # Find the latest tag
-  tag_version="$(git tag --sort=-creatordate | head -n1)" && \
-  echo ${tag_version} && \
-
-  user="firepress-org"
-  git_repo="ghostfire"
-  GOPATH=$(go env GOPATH)
+  clear && echo && \
+  echo "Let's release version: ${tag_version}" && sleep 1 && \
 
   # Requires https://github.com/aktau/github-release
-  $GOPATH/bin/github-release release \
-    --user ${user} \
-    --repo ${git_repo} \
-    --tag ${tag_version} \
-    --name ${tag_version} \
-    --description "Refer to [CHANGELOG.md](https://github.com/firepress-org/ghostfire/blob/master/CHANGELOG.md) for details about this release."
+  ${gopath}/bin/github-release release \
+    --user "${git_user}" \
+    --repo "${git_repo}" \
+    --tag "${tag_version}" \
+    --name "${tag_version}" \
+    --description "Refer to [CHANGELOG.md]("${git_repo_url}"/blob/master/CHANGELOG.md) for details about this release."
 
-}
-function version {
-  ver
+    echo "${git_repo_url}/releases/tag/${tag_version}"
 }
 function tag {
   echo "Look for 'ver' instead."
@@ -105,14 +113,6 @@ function push {
   git push
 }
 
-function App_is_input2_empty {
-  if [[ "${input_2}" == "not-set" ]]; then
-    echo -e "${col_pink} ERROR: You must provid a Git message."
-    echo -e "${col_pink}        ./utility.sh push ;Add this great feature; (use double quotes, not ;)"
-    App_stop
-  fi
-}
-
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 # OTHER
@@ -126,7 +126,132 @@ function test {
   echo -e "${col_blue} Date is: ${date_sec}"
   # Useful when trying to find bad variables along 'set -o nounset'
 }
+#
+  #
+#
+function gitignore {
+# this overrides your existing .gitignore
 
+cat <<EOF > .gitignore
+# .gitignore
+############
+test
+.cache
+coverage
+dist
+node_modules
+npm-debug
+.env
+
+# Directories
+############
+
+# Files
+############
+var-config.sh
+
+# Compiled source #
+###################
+*.com
+*.class
+*.dll
+*.exe
+*.o
+*.so
+
+# Packages #
+############
+# it's better to unpack these files and commit the raw source
+# git has its own built in compression methods
+*.7z
+*.dmg
+*.gz
+*.iso
+*.jar
+*.rar
+*.tar
+*.zip
+
+# Logs and databases #
+######################
+*.log
+*.sql
+*.sqlite
+
+# OS generated files #
+######################
+.DS_Store
+.DS_Store?
+.vscode
+.Trashes
+ehthumbs.db
+Thumbs.db
+.AppleDouble
+.LSOverride
+.metadata_never_index
+
+# Thumbnails
+############
+._*
+
+# Icon must end with two \r
+###########################
+Icon
+
+# Files that might appear in the root of a volume
+#################################################
+.DocumentRevisions-V100
+.fseventsd
+.dbfseventsd
+.Spotlight-V100
+.TemporaryItems
+.Trashes
+.trash
+.VolumeIcon.icns
+.com.apple.timemachine.donotpresent
+.com.apple.timemachine.supported
+.PKInstallSandboxManager
+.PKInstallSandboxManager-SystemSoftware
+.file
+.hotfiles.btree
+.quota.ops.user
+.quota.user
+.quota.ops.group
+.quota.group
+.vol
+.efi
+
+# Directories potentially created on remote AFP share
+#####################################################
+.AppleDB
+.AppleDesktop
+Network Trash Folder
+Temporary Items
+.apdisk
+.Mobile*
+.disk_*
+
+# Sherlock files
+################
+TheFindByContentFolder
+TheVolumeSettingsFolder
+.FBCIndex
+.FBCSemaphoreFile
+.FBCLockFolder
+EOF
+}
+#
+  #
+#
+function App_is_input2_empty {
+  if [[ "${input_2}" == "not-set" ]]; then
+    echo -e "${col_pink} ERROR: You must provide a Git message."
+    App_stop
+  fi
+}
+#
+  #
+#
 function array_example {
   arr=( "hello" "world" "three" )
   
@@ -134,7 +259,9 @@ function array_example {
     echo ${i}
   done
 }
-
+#
+  #
+#
 function passgen {
   grp1=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c11-14) && \
   grp2=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c2-25) && \
@@ -149,11 +276,15 @@ function passgenmax {
   clear && \
   echo "${grp1}_${grp2}_${grp3}"
 }
-
+#
+  #
+#
 function App_stop {
   echo && exit 1
 }
-
+#
+  #
+#
 function App_utility_vars {
 #==============================================
 #	Date generators
@@ -182,8 +313,9 @@ date_month="$(date +%Y-%m)-XX";
   export col_white="\e[97m——>\e[39m"
   export col_def="\e[39m"
 }
-
-
+#
+  #
+#
 function doc {
 cat << EOF
   Utility's doc (documentation):
@@ -215,7 +347,7 @@ function main() {
   input_1=$1
   if [[ -z "$1" ]]; then    #if empty
     clear
-    echo -e "${col_pink} ERROR: You must provid at least one attribute."
+    echo -e "${col_pink} ERROR: You must provide at least one attribute."
     App_stop
   else
     input_1=$1
@@ -246,5 +378,5 @@ function main() {
 # ENTRYPOINT
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 main "$@"
-echo && pwd && echo
+echo
 # https://github.com/firepress-org/bash-script-template
