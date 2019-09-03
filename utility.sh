@@ -45,6 +45,10 @@ function edge {
 function check {
   git checkout
 }
+function diff {
+  check && echo
+  git diff
+}
 function ver {    # version
   App_is_input2_empty
   tag_version="${input_2}"
