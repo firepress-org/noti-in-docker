@@ -102,7 +102,7 @@ function push {
 }
 
 function App_is_input2_empty {
-  if [[ -z "$2" ]]; then    #if empty
+  if [[ -z ${input_2} ]]; then    #if empty
     echo "Error: You must provid a Git message."
     echo '       example: ./utility.sh push "Add this great feature"'
     App_stop
@@ -114,6 +114,7 @@ function App_is_input2_empty {
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
 function test {
+
   echo "\$1 is now ${input_1}"
   echo "\$2 is now ${input_2}"
   echo "\$3 is now ${input_3}"
