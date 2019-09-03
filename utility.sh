@@ -47,7 +47,7 @@ function check {
 }
 function ver {    # version
   App_is_input2_empty
-  tag_version="${input_2}"
+  tag_version=${input_2}
 
   echo "Do we need to first update CHANGELOG.md ?" sleep 5;
 
@@ -96,7 +96,7 @@ function push {
 
   git status && \
   git add -A && \
-  git commit -m "${input_2}" && \
+  git commit -m ${input_2} && \
   clear
   git push
 }

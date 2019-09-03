@@ -2,7 +2,7 @@
 
 noti in a docker container using CI (continuous integration). It uses best practices: rebuild everyday, multi-stage builds, non-root, upx, labels, alpine, etc
 
-**It features**: 
+**It features**:
 
 - it builds **everyday** and on every commits
 - it builds from the **go sources**
