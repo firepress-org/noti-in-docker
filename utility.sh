@@ -127,6 +127,14 @@ function test {
   # Useful when trying to find bad variables along 'set -o nounset'
 }
 
+function array_example {
+  arr=( "hello" "world" "three" )
+  
+  for i in "${arr[@]}"; do
+    echo ${i}
+  done
+}
+
 function passgen {
   grp1=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c11-14) && \
   grp2=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c2-25) && \
