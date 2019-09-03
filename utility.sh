@@ -123,16 +123,62 @@ function test {
   echo "\$1 is now ${input_1}"
   echo "\$2 is now ${input_2}"
   echo "\$3 is now ${input_3}"
+  echo -e "${col_blue} Date is: ${date_sec}"
   # Useful when trying to find bad variables along 'set -o nounset'
+}
+
+function passgen {
+  grp1=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c11-14) && \
+  grp2=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c2-25) && \
+  grp3=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c21-24) && \
+  clear && \
+  echo "${grp1}_${grp2}_${grp3}"
+}
+function passgenmax {
+  grp1=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c11-14) && \
+  grp2=$(openssl rand -base64 48 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c2-50) && \
+  grp3=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c21-24) && \
+  clear && \
+  echo "${grp1}_${grp2}_${grp3}"
 }
 
 function App_stop {
   echo && exit 1
 }
 
+function App_utility_vars {
+#==============================================
+#	Date generators
+ date_nano="$(date +%Y-%m-%d_%HH%Ms%S-%N)";
+  date_sec="$(date +%Y-%m-%d_%HH%Ms%S)";
+  date_min="$(date +%Y-%m-%d_%HH%M)";
+ date_hour="$(date +%Y-%m-%d_%HH)XX";
+  date_day="$(date +%Y-%m-%d)";
+date_month="$(date +%Y-%m)-XX";
+ date_year="$(date +%Y)-XX-XX";
+          # 2017-02-22_10H24_14-500892448
+          # 2017-02-22_10H24_14
+          # 2017-02-22_10H24
+          # 2017-02-22_10HXX
+          # 2017-02-22
+          # 2017-02-XX
+          # 2017-XX-XX
+
+#==============================================
+#	Define color for echo prompts:
+export col_std="\e[39m——>\e[39m"
+export col_grey="\e[39m——>\e[39m"
+export col_blue="\e[34m——>\e[39m"
+export col_pink="\e[35m——>\e[39m"
+export col_green="\e[36m——>\e[39m"
+export col_white="\e[97m——>\e[39m"
+export col_def="\e[39m"
+}
+
+
 function doc {
 cat << EOF
-  Doc (documentation):
+  Utility's doc (documentation):
 
   This text is used as a placeholder. Words that will follow won't
   make any sense and this is fine. At the moment, the goal is to 
@@ -180,6 +226,7 @@ function main() {
   script_init "$@"
   cron_init
   colour_init
+  App_utility_vars
   #lock_init system
 
   clear
