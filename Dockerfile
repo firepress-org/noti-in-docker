@@ -1,16 +1,20 @@
 # Those are required by Github Action CI
 ARG VERSION="3.2.0"
 ARG APP_NAME="noti"
+#
+ARG ALPINE_VERSION="3.10"
+ARG USER="onfire"
+#
 ARG DOCKERHUB_USER="devmtl"
 ARG GITHUB_USER="firepress"
 ARG GITHUB_ORG="firepress-org"
 ARG GITHUB_REGISTRY="registry"
 #
-ARG USER="onfire"
-ARG ALPINE_VERSION="3.10"
 ARG GIT_REPO_URL="https://github.com/firepress-org/noti-in-docker"
 ARG GIT_REPO_SOURCE="https://github.com/variadico/noti"
 
+# GNU v3 | Please credit my work if you are re-using some of it :)
+# by Pascal Andy | https://pascalandy.com/blog/now/
 
 # ----------------------------------------------
 # BUILDER LAYER
