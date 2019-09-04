@@ -31,6 +31,7 @@ function figlet {
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 # Git
+# Requires https://github.com/aktau/github-release
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
 function hash {
@@ -75,8 +76,8 @@ function version {
   sleep 1 && \
   # push tag
   git tag ${tag_version} && \
-  git push --tags && \
-  release
+  git push --tags
+  #release
 }
 function release {
 
@@ -92,7 +93,7 @@ function release {
   clear && echo && \
   echo "Let's release version: ${tag_version}" && sleep 1 && \
 
-  # Requires https://github.com/aktau/github-release
+
   ${gopath}/bin/github-release release \
     --user "${git_user}" \
     --repo "${git_repo}" \
