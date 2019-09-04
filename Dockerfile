@@ -45,7 +45,7 @@ RUN set -eux && git clone "${GIT_REPO_SOURCE}" --single-branch --depth 1 -b "${V
 
 # Compile
 WORKDIR /go/src/github.com/variadico/noti/cmd/noti
-RUN set -eux && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOFLAGS="-mod=vendor" && \
+RUN set -eux && CGO_ENABLED=0 GOOS=linux GOARCH=amd64 GOFLAGS="-mod=vendor" \
     go build -o /usr/local/bin/"${APP_NAME}"
 
 # Compress
