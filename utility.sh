@@ -49,6 +49,9 @@ function diff {
   check && echo
   git diff
 }
+function ci-status {
+  hub ci-status $(git rev-parse HEAD)
+}
 function version {
   # update version in Dockerfile
   # update version on the latest commit
