@@ -92,6 +92,12 @@ jobs:
           echo "$(cat GITHUB_USER_APP) < GITHUB_USER_APP"
           echo "$(cat GITHUB_REGISTRY) < GITHUB_REGISTRY"
 
+      - name: Logs / dockerfile lint
+        run: | 
+          docker run -it --rm \
+            -v $(pwd)/$(cat DOCKERFILE_NAME):/Dockerfile:ro \
+            redcoolbeans/dockerlint
+
       - name: Logs / docker (inspect, history, version, info), uname
         run: |
           docker inspect $(cat TAG_UAT)
