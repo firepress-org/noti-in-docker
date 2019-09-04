@@ -1,15 +1,11 @@
 #!/usr/bin/env bash
 
 # A best practices Bash script template with many useful functions. This file
-# combines the source.sh & script.sh files into a single script. If you want
-# your script to be entirely self-contained then this should be what you want!
-
-# A better class of script...
-set -o errexit          # Exit on most errors (see the manual)
-set -o errtrace         # Make sure any error trap is inherited
-#set -o nounset          # Disallow expansion of unset variables
-set -o pipefail         # Use last non-zero exit code in a pipeline
-#set -o xtrace          # Trace the execution of the script (debug)
+# is suitable for sourcing into other scripts and so only contains functions
+# which are unlikely to need modification. It omits the following functions:
+# - main()
+# - parse_params()
+# - script_usage()
 
 # DESC: Handler for unexpected errors
 # ARGS: $1 (optional): Exit code (defaults to 1)
@@ -118,7 +114,7 @@ function script_exit() {
 function script_init() {
     # Useful paths
     readonly orig_cwd="$PWD"
-    readonly script_path="${BASH_SOURCE[0]}"
+    readonly script_path="${BASH_SOURCE[1]}"
     readonly script_dir="$(dirname "$script_path")"
     readonly script_name="$(basename "$script_path")"
     readonly script_params="$*"
@@ -400,122 +396,4 @@ function run_as_root() {
     fi
 }
 
-
-# DESC: Usage help
-# ARGS: None
-# OUTS: None
-function script_usage() {
-    cat << EOF
-Usage:
-     -h|--help                  Displays this help
-     -v|--verbose               Displays verbose output
-    -nc|--no-colour             Disables colour output
-    -cr|--cron                  Run silently unless we encounter an error
-EOF
-}
-
-
-# DESC: Parameter parser
-# ARGS: $@ (optional): Arguments provided to the script
-# OUTS: Variables indicating command-line parameters and options
-function parse_params() {
-    local param
-    while [[ $# -gt 0 ]]; do
-        param="$1"
-        shift
-        case $param in
-            -h|--help)
-                script_usage
-                exit 0
-                ;;
-            -v|--verbose)
-                verbose=true
-                ;;
-            -nc|--no-colour)
-                no_colour=true
-                ;;
-            -cr|--cron)
-                cron=true
-                ;;
-            *)
-                script_exit "Invalid parameter was provided: $param" 2
-                ;;
-        esac
-    done
-}
-############################################################
-# main
-############################################################
-function set_vars {
-    if [[ -z "$2" ]]; then
-      input_2="null"
-    else
-      input_2="$2"
-    fi
-
-    input_1="$1"
-}
-############################################################
-# main
-############################################################
-# DESC: Main control flow
-# ARGS: $@ (optional): Arguments provided to the script
-# OUTS: None
-function main() {
-    trap script_trap_err ERR
-    trap script_trap_exit EXIT
-
-    script_init "$@"
-    #parse_params "$@"
-    cron_init
-    colour_init
-    set_vars
-    #lock_init system
-    clear
-
-    # run function
-    $1
-}
-
-############################################################
-# linter
-############################################################
-function lint {
-  docker_image="redcoolbeans/dockerlint"
-
-  docker run -it --rm \
-    -v $(pwd)/Dockerfile:/Dockerfile:ro \
-    ${docker_image}
-}
-
-############################################################
-# git functions
-############################################################
-function hash {
-  git rev-parse --short HEAD
-}
-function master {
-  git checkout master
-}
-function edge {
-  git checkout edge
-}
-function check {
-  git checkout
-}
-function test {
-  echo "${input_1} / ${input_2}"
-}
-function push {
-  git status && \
-  git add -A && \
-  git commit -m ${input_2} && \
-  git push
-}
-
-
-
-############################################################
-# Entrypoint
-############################################################
-main "$@"
+# vim: syntax=sh cc=80 tw=79 ts=4 sw=4 sts=4 et sr

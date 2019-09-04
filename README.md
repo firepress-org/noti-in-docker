@@ -1,35 +1,47 @@
 # [noti-in-docker](https://github.com/firepress-org/noti-in-docker)
 
-noti in a docker container using CI (continuous integration). It uses best practices: rebuild everyday, multi-stage builds, non-root, upx, labels, alpine, etc
+**noti** in a docker container along a complexe CI (continuous integration).
 
-**It features**:
+## Features
 
-- it builds **everyday** and on every commits
-- it builds from the **go sources**
-- it uses **multi-stage** build
-- it uses **alpine** as final image
-- it runs as **non-root**
-- the app runs under **tiny**
-- it push **four tags** to registry
-- it uses **Labels**
-- it compress the app with **UPX**
-- the docker image's size (uncompressed) is ~~ **13MB**
+- **many scripts** to easily manage this project. Based on [bash-script-template](https://github.com/firepress-org/bash-script-template)
+- an **everyday build** and on every commits (CI)
+- a build from the **sources** (CI)
+a logic of **four docker tags** on master (CI)
+- a logic of **three docker tags** on edge (CI)
+- few UAT **tests** (CI)
+an automatic push of **README** to Dockerhub (CI)
+- **Slack** notifications when build succeed (Job 2) (CI)
+- a **multi-stage** build (Dockerfile)
+- an **alpine** base docker image (Dockerfile)
+- a **non-root** user (Dockerfile)
+- a PID 1 under **tiny** (Dockerfile)
+- great **Labels** (Dockerfile)
+- a compressed binary using **UPX** (Dockerfile)
+- a **small footprint** docker image's size (Dockerfile)
+- and probably more, by hey, who is counting?
 
 <br>
 
 ## About noti
 
+At **FirePress** we use noti to keep track of backups, cron, critical error that could happen in our DevOps set up.
+
 [Noti](https://github.com/variadico/noti/) let you trigger a notifications.
 
 Never sit and wait for some long-running process to finish. Noti can alert you when it's done. You can receive messages on your computer or phone.
 
-At FirePress we use noti to keep track of backups, cron, critical error that could happen in our DevOps set up.
+<br>
+
+## CI configuration & Github Actions
+
+[See README-CI.md](./README-CI.md)
 
 <br>
 
-## Regarding Github Actions & CI configuration
+## Related docker images
 
-[See README-CI.md](./README-CI.md)
+[See README-related.md](./README-related.md)
 
 <br>
 
@@ -41,26 +53,25 @@ https://hub.docker.com/r/devmtl/noti/tags
 You should use **this tag format** `$VERSION_$DATE_$HASH-COMMIT` in production.
 
 ```
-devmtl/rclone:3.2.0_2019-08-31_10H54s57_23a4829
+devmtl/noti:3.2.0_2019-09-03_04H01s17_0d571ec
 ```
 
 These tags are also available to quickly test stuff:
 
 ```
-devmtl/rclone:3.2.0
-devmtl/rclone:stable
-devmtl/rclone:latest
+devmtl/noti:3.2.0
+devmtl/noti:stable
+devmtl/noti:latest
 ```
 
 <br>
 
-
 # How to use it
 
-This example is the send messages to a slack channel.
+This example sends a message to a Slack.
 
 ```
-IMG_noti="3.2.0_2019-08-31_10H54s57_23a4829"
+IMG_noti="3.2.0_2019-09-03_04H01s17_0d571ec"
 
 docker run --rm \
   --name noti \
@@ -72,6 +83,7 @@ docker run --rm \
     NOTI_SLACK_CHANNEL="$SLACK_CHANNEL" \
     noti -k -m "$NOTI_MESSAGE" '
 ```    
+
 <br>
 
 &nbsp;
@@ -96,15 +108,12 @@ docker run --rm \
 
 &nbsp;
 
-<br>
 
-## Hosting
+**Are you looking for an alternative to WordPress?**
 
-At FirePress we empower entrepreneurs and small organizations to create their websites on top of [Ghost](https://firepress.org/en/faq/#what-is-ghost).
+![ghost-v2-review](https://user-images.githubusercontent.com/6694151/64218253-f144b300-ce8e-11e9-8d75-312a2b6a3160.gif)
 
-At the moment, our **pricing** for hosting one Ghost website is $15 (Canadian dollars). This price will be only available for our first 100 new clients, starting May 1st, 2019 🙌. [See our pricing section](https://firepress.org/en/pricing/) for details.
-
-More details [about this annoucement](https://forum.ghost.org/t/host-your-ghost-website-on-firepress/7092/1) on Ghost's forum.
+Well, [Ghost](https://firepress.org/en/faq/#what-is-ghost) might be the CMS your were looking for. Check out our [hosting plans](https://firepress.org/en).
 
 <br>
 
