@@ -108,13 +108,12 @@ docker run --rm \
 
 &nbsp;
 
-<br>
 
-## Hosting
-
-Are you looking for an alternative to WordPress? Well, [Ghost](https://firepress.org/en/faq/#what-is-ghost) might be the CMS your were looking for.
+**Are you looking for an alternative to WordPress?**
 
 ![ghost-v2-review](https://user-images.githubusercontent.com/6694151/64218253-f144b300-ce8e-11e9-8d75-312a2b6a3160.gif)
+
+Well, [Ghost](https://firepress.org/en/faq/#what-is-ghost) might be the CMS your were looking for. Check out our [hosting plans](https://firepress.org/en).
 
 <br>
 
