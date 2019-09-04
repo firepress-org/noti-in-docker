@@ -50,13 +50,14 @@ Never sit and wait for some long-running process to finish. Noti can alert you w
 Always check on docker hub the most recent build:<br>
 https://hub.docker.com/r/devmtl/noti/tags
 
-You should use **this tag format** `$VERSION_$DATE_$HASH-COMMIT` in production.
+You should use **this tag format** in production.<br>
+`${VERSION} _ ${DATE} _ ${HASH-COMMIT}` 
 
 ```
 devmtl/noti:3.2.0_2019-09-03_04H01s17_0d571ec
 ```
 
-These tags are also available to quickly test stuff:
+These tags are also available to quickly try stuff:
 
 ```
 devmtl/noti:3.2.0
