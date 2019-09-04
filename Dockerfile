@@ -1,5 +1,5 @@
 # Those are required by Github Action CI
-ARG VERSION="3.2.0-r2"
+ARG VERSION="3.2.0"
 ARG APP_NAME="noti"
 #
 ARG ALPINE_VERSION="3.10"
