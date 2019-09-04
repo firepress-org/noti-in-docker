@@ -112,11 +112,9 @@ docker run --rm \
 
 ## Hosting
 
-Are you looking for an alternative to WordPress? Well, [Ghost](https://firepress.org/en/faq/#what-is-ghost) might be for you.
+Are you looking for an alternative to WordPress? Well, [Ghost](https://firepress.org/en/faq/#what-is-ghost) might be the CMS your were looking for.
 
-![ghost-2-review](https://d1gfixkhrc5ubb.cloudfront.net/9eop%2Fpreview%2F28071873%2Fmain_large.gif?response-content-disposition=inline%3Bfilename%3D%22main_large.gif%22%3B&Expires=1567558172&Signature=BfrKhNCtxekHIjUXfDv1lwa~8Gu~tbGfF-lIrZki-P2IyiFRraKwugz81cDo8RcHMUpMtXT4Y2d4Npctd6EzvMpLZHMUhkiJS3cm~C-wtjtdfRPr4OSFghuy~jKufewG~r-~4oe55PqUMAQhIFZWWrIkprXauLMbtAy-AC8umVML~N5zA3NPQr-a-L1Z8P43KujuEl-JbsNaojehFPwDP0fcp-aB8~me-ye2Ttja4785Pgepz95qIARoK0424XmJilD1k5HBvBk5xiPDuugM3ExPDbiBo4qoVrlMzDV-sPEVNx72Een1TaAGpVZHE5iw736pR~a-dxajAoRQdWf1Uw__&Key-Pair-Id=APKAJT5WQLLEOADKLHBQ)
-
-
+![ghost-v2-review](https://user-images.githubusercontent.com/6694151/64218253-f144b300-ce8e-11e9-8d75-312a2b6a3160.gif)
 
 <br>
 
