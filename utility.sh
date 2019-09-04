@@ -57,7 +57,6 @@ function version {
   # update version in Dockerfile
   # update version on the latest commit
   # push tag to remote
-  # release on github
 
   App_is_input2_empty
   tag_version="${input_2}"
@@ -77,9 +76,12 @@ function version {
   # push tag
   git tag ${tag_version} && \
   git push --tags
-  #release
 }
 function release {
+  # release on github
+
+  App_is_input2_empty
+  tag_version="${input_2}"
 
   # Read variables from Dockerfile
   git_user=$(cat Dockerfile | grep GITHUB_ORG= | head -n 1 | grep -o '".*"' | sed 's/"//g')
@@ -87,19 +89,22 @@ function release {
   git_repo_url=$(cat Dockerfile | grep GIT_REPO_URL= | head -n 1 | grep -o '".*"' | sed 's/"//g')
   
   export GITHUB_TOKEN="$(cat ~/secrets_open/token_github/token.txt)"
-  tag_version="$(git tag --sort=-creatordate | head -n1)"
   gopath=$(go env GOPATH)
 
+  release_message="Refer to [CHANGELOG.md]("${git_repo_url}"/blob/master/CHANGELOG.md) for details about this release."
   clear && echo && \
   echo "Let's release version: ${tag_version}" && sleep 1 && \
 
-
-  ${gopath}/bin/github-release release \
-    --user "${git_user}" \
-    --repo "${git_repo}" \
-    --tag "${tag_version}" \
-    --name "${tag_version}" \
-    --description "Refer to [CHANGELOG.md]("${git_repo_url}"/blob/master/CHANGELOG.md) for details about this release."
+  hub release create -oc \
+    -m "${tag_version}" \
+    -m "${release_message}" \
+    -t "$(git rev-parse HEAD)" \
+    "${tag_version}"
+  # https://hub.github.com/hub-release.1.html
+    # title
+    # description
+    # on which commits (use the latest)
+    # on which tag (use the latest)
 
     echo "${git_repo_url}/releases/tag/${tag_version}"
 }
