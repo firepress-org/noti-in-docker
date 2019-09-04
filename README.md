@@ -1,38 +1,47 @@
 # [noti-in-docker](https://github.com/firepress-org/noti-in-docker)
 
-noti in a docker container using CI (continuous integration). It uses best practices: rebuild everyday, multi-stage builds, non-root, upx, labels, alpine, etc
+**noti** in a docker container along a complexe CI (continuous integration).
 
-**It features**:
+## Features
 
-- an **everyday build** and on every commits
-- a build from the **sources**
-- a **multi-stage** build
-- an **alpine** base docker image
-- a **non-root** user
-- a PID 1 under **tiny**
-- a logic of **four docker tags** on master
-- a logic of **three docker tags** on edge
-- great **Labels**
-- a compressed binary using **UPX**
-- a **small footprint** docker image's size
 - **many scripts** to easily manage this project. Based on [bash-script-template](https://github.com/firepress-org/bash-script-template)
-- and maybe more…
+- an **everyday build** and on every commits (CI)
+- a build from the **sources** (CI)
+a logic of **four docker tags** on master (CI)
+- a logic of **three docker tags** on edge (CI)
+- few UAT **tests** (CI)
+an automatic push of **README** to Dockerhub (CI)
+- **Slack** notifications when build succeed (Job 2) (CI)
+- a **multi-stage** build (Dockerfile)
+- an **alpine** base docker image (Dockerfile)
+- a **non-root** user (Dockerfile)
+- a PID 1 under **tiny** (Dockerfile)
+- great **Labels** (Dockerfile)
+- a compressed binary using **UPX** (Dockerfile)
+- a **small footprint** docker image's size (Dockerfile)
+- and probably more, by hey, who is counting?
 
 <br>
 
 ## About noti
 
+At **FirePress** we use noti to keep track of backups, cron, critical error that could happen in our DevOps set up.
+
 [Noti](https://github.com/variadico/noti/) let you trigger a notifications.
 
 Never sit and wait for some long-running process to finish. Noti can alert you when it's done. You can receive messages on your computer or phone.
 
-At FirePress we use noti to keep track of backups, cron, critical error that could happen in our DevOps set up.
+<br>
+
+## CI configuration & Github Actions
+
+[See README-CI.md](./README-CI.md)
 
 <br>
 
-## Regarding Github Actions & CI configuration
+## Related docker images
 
-[See README-CI.md](./README-CI.md)
+[See README-related.md](./README-related.md)
 
 <br>
 
@@ -44,26 +53,25 @@ https://hub.docker.com/r/devmtl/noti/tags
 You should use **this tag format** `$VERSION_$DATE_$HASH-COMMIT` in production.
 
 ```
-devmtl/rclone:3.2.0_2019-08-31_10H54s57_23a4829
+devmtl/noti:3.2.0_2019-09-03_04H01s17_0d571ec
 ```
 
 These tags are also available to quickly test stuff:
 
 ```
-devmtl/rclone:3.2.0
-devmtl/rclone:stable
-devmtl/rclone:latest
+devmtl/noti:3.2.0
+devmtl/noti:stable
+devmtl/noti:latest
 ```
 
 <br>
 
-
 # How to use it
 
-This example is the send messages to a slack channel.
+This example sends a message to a Slack.
 
 ```
-IMG_noti="3.2.0_2019-08-31_10H54s57_23a4829"
+IMG_noti="3.2.0_2019-09-03_04H01s17_0d571ec"
 
 docker run --rm \
   --name noti \
@@ -75,6 +83,7 @@ docker run --rm \
     NOTI_SLACK_CHANNEL="$SLACK_CHANNEL" \
     noti -k -m "$NOTI_MESSAGE" '
 ```    
+
 <br>
 
 &nbsp;
@@ -103,11 +112,11 @@ docker run --rm \
 
 ## Hosting
 
-At FirePress we empower entrepreneurs and small organizations to create their websites on top of [Ghost](https://firepress.org/en/faq/#what-is-ghost).
+Are you looking for an alternative to WordPress? Well, [Ghost](https://firepress.org/en/faq/#what-is-ghost) might be for you.
 
-At the moment, our **pricing** for hosting one Ghost website is $15 (Canadian dollars). This price will be only available for our first 100 new clients, starting May 1st, 2019 🙌. [See our pricing section](https://firepress.org/en/pricing/) for details.
+![ghost-2-review](https://d1gfixkhrc5ubb.cloudfront.net/9eop%2Fpreview%2F28071873%2Fmain_large.gif?response-content-disposition=inline%3Bfilename%3D%22main_large.gif%22%3B&Expires=1567558172&Signature=BfrKhNCtxekHIjUXfDv1lwa~8Gu~tbGfF-lIrZki-P2IyiFRraKwugz81cDo8RcHMUpMtXT4Y2d4Npctd6EzvMpLZHMUhkiJS3cm~C-wtjtdfRPr4OSFghuy~jKufewG~r-~4oe55PqUMAQhIFZWWrIkprXauLMbtAy-AC8umVML~N5zA3NPQr-a-L1Z8P43KujuEl-JbsNaojehFPwDP0fcp-aB8~me-ye2Ttja4785Pgepz95qIARoK0424XmJilD1k5HBvBk5xiPDuugM3ExPDbiBo4qoVrlMzDV-sPEVNx72Een1TaAGpVZHE5iw736pR~a-dxajAoRQdWf1Uw__&Key-Pair-Id=APKAJT5WQLLEOADKLHBQ)
 
-More details [about this annoucement](https://forum.ghost.org/t/host-your-ghost-website-on-firepress/7092/1) on Ghost's forum.
+
 
 <br>
 
