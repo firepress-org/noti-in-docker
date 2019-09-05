@@ -1,33 +1,32 @@
 # [noti-in-docker](https://github.com/firepress-org/noti-in-docker)
 
-**noti** in a docker container along a complexe CI (continuous integration).
+**noti** in a docker container along a CI (continuous integration).
 
 ## Features
 
-- **many scripts** to easily manage this project. Based on [bash-script-template](https://github.com/firepress-org/bash-script-template)
-- an **everyday build** and on every commits (CI)
+- an **everyday build** and on every commit (CI)
 - a build from the **sources** (CI)
-a logic of **four docker tags** on master (CI)
-- a logic of **three docker tags** on edge (CI)
+- a logic of **four docker tags** on the master branch (CI) and logic of **three docker tags** on any other branches (CI)
 - few UAT **tests** (CI)
-an automatic push of **README** to Dockerhub (CI)
-- **Slack** notifications when build succeed (Job 2) (CI)
+- an automatic push of the **README** to Dockerhub (CI)
+- **Slack** notifications when a build succeed (Job 2) (CI)
 - a **multi-stage** build (Dockerfile)
 - an **alpine** base docker image (Dockerfile)
 - a **non-root** user (Dockerfile)
-- a PID 1 under **tiny** (Dockerfile)
-- great **Labels** (Dockerfile)
-- a compressed binary using **UPX** (Dockerfile)
+- having this app running as PID 1 under **tiny** (Dockerfile)
+- **Labels** (Dockerfile)
+- this app is compressed using **UPX** (Dockerfile)
 - a **small footprint** docker image's size (Dockerfile)
-- and probably more, by hey, who is counting?
+- `utility.sh` based on [bash-script-template](https://github.com/firepress-org/bash-script-template)
+- and probably more, but hey, who is counting?
 
 <br>
 
 ## About noti
 
-At **FirePress** we use noti to keep track of backups, cron, critical error that could happen in our DevOps set up.
+At **FirePress**, we use noti to keep track of backups, cron, a critical error that could happen in our DevOps set up.
 
-[Noti](https://github.com/variadico/noti/) let you trigger a notifications.
+[Noti](https://github.com/variadico/noti/) let you trigger a notification.
 
 Never sit and wait for some long-running process to finish. Noti can alert you when it's done. You can receive messages on your computer or phone.
 
@@ -57,7 +56,7 @@ You should use **this tag format** in production.<br>
 devmtl/noti:3.2.0_2019-09-03_04H01s17_0d571ec
 ```
 
-These tags are also available to quickly try stuff:
+These tags are also available to try stuff quickly:
 
 ```
 devmtl/noti:3.2.0
@@ -110,11 +109,9 @@ docker run --rm \
 &nbsp;
 
 
-**Are you looking for an alternative to WordPress?**
+If you are looking for an alternative to WordPress, [Ghost](https://firepress.org/en/faq/#what-is-ghost) might be the CMS you are looking for. Check out our [hosting plans](https://firepress.org/en).
 
 ![ghost-v2-review](https://user-images.githubusercontent.com/6694151/64218253-f144b300-ce8e-11e9-8d75-312a2b6a3160.gif)
-
-Well, [Ghost](https://firepress.org/en/faq/#what-is-ghost) might be the CMS your were looking for. Check out our [hosting plans](https://firepress.org/en).
 
 <br>
 
@@ -128,13 +125,13 @@ The power of communities pull request and forks means that `1 + 1 = 3`. You can 
 4. Push to the branch: `git push origin my-new-feature`
 5. Submit a pull request
 
-Check this post for more details: [Contributing to our Github project](https://pascalandy.com/blog/contributing-to-our-github-project/). Also, by contributing you agree to the [Contributor Code of Conduct on GitHub](https://pascalandy.com/blog/contributor-code-of-conduct-on-github/). It's plain common sense really.
+Check this post for more details: [Contributing to our Github project](https://pascalandy.com/blog/contributing-to-our-github-project/). Also, by contributing you agree to the [Contributor Code of Conduct on GitHub](https://pascalandy.com/blog/contributor-code-of-conduct-on-github/). 
 
 <br>
 
 ## License
 
-- This git repo is under the **GNU V3** license. [Find it here](https://github.com/pascalandy/GNU-GENERAL-PUBLIC-LICENSE/blob/master/LICENSE.md).
+- This git repo is under the **GNU V3** license. [Find it here](./LICENSE.md).
 
 <br>
 
@@ -144,6 +141,6 @@ Our [mission](https://firepress.org/en/our-mission/) is to empower freelancers a
 
 Because we believe your website should speak up in your name, we consider our mission completed once your site has become your impresario.
 
-For more info about the man behind the startup, check out my [now page](https://pascalandy.com/blog/now/). You can also follow me on Twitter [@askpascalandy](https://twitter.com/askpascalandy).
+Find me on Twitter [@askpascalandy](https://twitter.com/askpascalandy).
 
 — The FirePress Team 🔥📰
