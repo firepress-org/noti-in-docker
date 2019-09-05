@@ -15,6 +15,14 @@
 
 # Releases
 
+## 3.2.0-r3
+### ⚡️ Updates
+- 836b3622 update utility.sh to v0.6-r0
+
+## 3.2.0-r2
+### ⚡️ Updates
+- Make fct version and release independent
+
 ## 3.2.0-r1
 ### 🚀 Added (new feat.)
 - Introducing CHANGELOG.md
