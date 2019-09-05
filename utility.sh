@@ -61,7 +61,8 @@ function version {
   App_is_input2_empty
   tag_version="${input_2}"
 
-  min=1 max=10 message="Was our CHANGELOG.md updated???"
+  # Prompt a warning
+  min=1 max=10 message="WARNING: On MASTER branch?? CHANGELOG.md is updated??"
   for ACTION in $(seq ${min} ${max}); do
     echo -e "${col_pink} ${message} ${col_pink}" && sleep 0.4 && clear && \
     echo -e "${col_blue} ${message} ${col_blue}" && sleep 0.4 && clear
@@ -81,12 +82,20 @@ function release {
   # release on github
 
   App_is_input2_empty
-  tag_version="${input_2}"
 
-  # Read variables from Dockerfile
-  git_user=$(cat Dockerfile | grep GITHUB_ORG= | head -n 1 | grep -o '".*"' | sed 's/"//g')
-  git_repo=$(cat Dockerfile | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g')
+  tag_version="${input_2}"
   git_repo_url=$(cat Dockerfile | grep GIT_REPO_URL= | head -n 1 | grep -o '".*"' | sed 's/"//g')
+
+  # Prompt a warning
+  min=1 max=10 message="WARNING: On MASTER branch?? CHANGELOG.md is updated??"
+  for ACTION in $(seq ${min} ${max}); do
+    echo -e "${col_pink} ${message} ${col_pink}" && sleep 0.4 && clear && \
+    echo -e "${col_blue} ${message} ${col_blue}" && sleep 0.4 && clear
+	done
+
+  # push tag
+  git tag ${tag_version} && \
+  git push --tags
   
   export GITHUB_TOKEN="$(cat ~/secrets_open/token_github/token.txt)"
   gopath=$(go env GOPATH)
