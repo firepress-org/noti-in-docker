@@ -15,6 +15,15 @@
 
 # Releases
 
+
+## 3.2.0-r4
+### ⚡️ Updates
+- 7231607d Move Aquasec microscanner step in job 2 as it takes about 4 min to complete
+- d26ba9db Update README using expanded sections / squashed
+- 012c6c9c Update gitignore
+- b7517d56 esthetic updates to LICENSE
+- 964fadf7 Update utility.sh to 0.7-r4
+
 ## 3.2.0-r3
 ### ⚡️ Updates
 - 836b3622 update utility.sh to v0.6-r0
