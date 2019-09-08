@@ -1,19 +1,18 @@
-# .gitignore
+# Files
 ############
+test
 .cache
 coverage
 dist
 node_modules
 npm-debug
 .env
-docker-compose*.yml
+var-config.sh
 
 # Directories
 ############
-
-# Files
-############
-var-config.sh
+/tmp
+/temp
 
 # Compiled source #
 ###################
