@@ -115,6 +115,7 @@ jobs:
 
       - name: Define variables
         run: |
+          echo "Dockerfile" > DOCKERFILE_NAME  
           cat $(cat DOCKERFILE_NAME) | grep DOCKERHUB_USER= | head -n 1 | grep -o '".*"' | sed 's/"//g' > DOCKERHUB_USER
           cat $(cat DOCKERFILE_NAME) | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g' > APP_NAME
           cat $(cat DOCKERFILE_NAME) | grep VERSION= | head -n 1 | grep -o '".*"' | sed 's/"//g' > VERSION
