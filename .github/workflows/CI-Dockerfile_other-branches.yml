@@ -68,8 +68,6 @@ jobs:
           git clone --depth 1 https://github.com/docker-library/official-images.git official-images
           official-images/test/run.sh $(cat TAG_UAT)
 
-      # bypassed / Test image with Aquasec microscanner
-
       - name: Logs / All tags & variables
         run: |
           echo "Check out https://hub.docker.com/r/$(cat DOCKERHUB_USER)/$(cat APP_NAME)/tags"
@@ -140,6 +138,9 @@ jobs:
             ' NOTI_SLACK_TOKEN="$SLACK_TOKEN_CRON" \
               NOTI_SLACK_CHANNEL="$SLACK_CHANNEL" \
               noti -k -m "$NOTI_MESSAGE" '
+
+      # bypassed / Test image with Aquasec microscanner
+      #- name: Test image with Aquasec microscanner
 
       - name: Github Actions ideas to implements
         run: |
