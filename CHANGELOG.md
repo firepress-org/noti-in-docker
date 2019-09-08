@@ -16,6 +16,12 @@
 # Releases
 
 
+## 3.2.0-r5
+### ⚡️ Updates
+- c07d6dda FIX / bring back a missing var
+- e8b75314 Bypass two steps in CI-Dockerfile_other-branches.yml
+- 57a5e3ba Fix step Test image with Aquasec microscanner
+
 ## 3.2.0-r4
 ### ⚡️ Updates
 - 7231607d Move Aquasec microscanner step in job 2 as it takes about 4 min to complete
