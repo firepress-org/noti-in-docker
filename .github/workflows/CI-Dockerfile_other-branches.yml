@@ -125,7 +125,8 @@ jobs:
           git rev-parse --short HEAD > SHORT_COMMIT_HASH
           echo "$(cat APP_NAME):edge-$(cat VERSION) / $(cat SHORT_COMMIT_HASH)" > NOTI_MESSAGE
 
-      # bypass / Push README to dockerhub description
+      - name: Push README to dockerhub description
+        run: echo "Bypassed as it's not in the master branch."
 
       - name: Notify on Slack
         run: |
@@ -139,8 +140,8 @@ jobs:
               NOTI_SLACK_CHANNEL="$SLACK_CHANNEL" \
               noti -k -m "$NOTI_MESSAGE" '
 
-      # bypassed / Test image with Aquasec microscanner
-      #- name: Test image with Aquasec microscanner
+      - name: Test image with Aquasec microscanner
+        run: echo "Bypassed as it's not in the master branch."
 
       - name: Github Actions ideas to implements
         run: |
