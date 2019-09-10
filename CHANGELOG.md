@@ -15,6 +15,10 @@
 
 # Releases
 
+## 3.2.0-r6
+### ⚡️ Updates
+- 6b8852f Update utility.sh v0.8.3
+- 89a185a Improve LICENSE
 
 ## 3.2.0-r5
 ### ⚡️ Updates
