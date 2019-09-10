@@ -1,19 +1,15 @@
 #!/usr/bin/env bash
 
-# Find the latest version of this application: https://github.com/firepress-org/bash-script-template
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
+# Find the latest version of this application:
+# https://github.com/firepress-org/bash-script-template
 #
 set -o errexit          # Exit on most errors (see the manual)
 set -o errtrace         # Make sure any error trap is inherited
 set -o pipefail         # Use last non-zero exit code in a pipeline
 #set -o xtrace          # Trace the execution of the script (debug)
-#
 #set -o nounset          # Disallow expansion of unset variables
 # --- Find bad variables by using `./utility.sh test two three`, else disable it
 # --- or remove $1, $2, $3 var defintions in @main
-#
-### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
@@ -21,7 +17,7 @@ set -o pipefail         # Use last non-zero exit code in a pipeline
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
 function push {
-# commit & push all changes
+# commit all & push all changes
   App_input2_rule
 
   git status && \
@@ -199,13 +195,17 @@ function release {
 
     first_name_author=$(git log | awk '/Author:/' | head -n1 | awk '{print $2}')
     tag_version="${input_2}"
-    git_repo_url=$(cat Dockerfile | grep GIT_REPO_URL= | head -n 1 | grep -o '".*"' | sed 's/"//g')
+    git_project_name=$(cat Dockerfile | grep GIT_PROJECT_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g')
+    github_org=$(cat Dockerfile | grep GITHUB_ORG= | head -n 1 | grep -o '".*"' | sed 's/"//g')
+    git_repo_url="https://github.com/${github_org}/${git_project_name}"
     release_message1="Refer to [CHANGELOG.md](./CHANGELOG.md) for details about this release."
-    release_message2="This release was packaged and published by using <./utility.sh release>."
+    release_message2="This release was packaged and published by using cmd <./utility.sh release>."
     release_message3="Enjoy!<br>${first_name_author}"
 
+    App_release_check_vars
+    
     clear && echo && \
-    echo "Let's release version: ${tag_version}" && sleep 1 && \
+    echo "Let's release version: ${tag_version}" && sleep 0.4 && \
 
     hub release create -oc \
       -m "${tag_version}" \
@@ -214,8 +214,11 @@ function release {
       -m "${release_message3}" \
       -t "$(git rev-parse HEAD)" \
       "${tag_version}"
+
     # https://hub.github.com/hub-release.1.html
       # title
+      # description
+      # description
       # description
       # on which commits (use the latest)
       # on which tag (use the latest)
@@ -226,6 +229,46 @@ function release {
     my_message="You must be a master branch." App_Pink
   fi
 }
+function App_release_check_vars {
+  if [[ -z "${first_name_author}" ]]; then
+    my_message="ERROR: first_name_author is empty." App_Pink App_Stop
+  elif [[ -z "${tag_version}" ]]; then
+    my_message="ERROR: tag_version is empty." App_Pink App_Stop
+  elif [[ -z "${git_project_name}" ]]; then
+    my_message="ERROR: git_project_name is empty." App_Pink App_Stop
+  elif [[ -z "${github_org}" ]]; then
+    my_message="ERROR: github_org is empty." App_Pink App_Stop
+  elif [[ -z "${git_repo_url}" ]]; then
+    my_message="ERROR: git_repo_url is empty." App_Pink App_Stop
+  elif [[ -z "${release_message1}" ]]; then
+    my_message="ERROR: release_message1 is empty." App_Pink App_Stop
+  elif [[ -z "${release_message2}" ]]; then
+    my_message="ERROR: release_message2 is empty." App_Pink App_Stop
+  elif [[ -z "${release_message3}" ]]; then
+    my_message="ERROR: release_message3 is empty." App_Pink App_Stop
+  fi
+}
+function release_find_the_latest {
+# find the latest release that was pushed on github
+
+  APP_NAME=$(cat Dockerfile | grep APP_NAME= | head -n 1 | grep -o '".*"' | sed 's/"//g')
+  GITHUB_ORG=$(cat Dockerfile | grep GITHUB_ORG= | head -n 1 | grep -o '".*"' | sed 's/"//g')
+
+  if [[ -z "${APP_NAME}" ]] && [[ -z "${GITHUB_ORG}" ]] ; then    #if empty
+    clear
+    my_message="Can't find APP_NAME and/or GITHUB_ORG in the Dockerfile." App_Pink
+    App_Stop
+  else
+
+    my_message=$(curl -s https://api.github.com/repos/${GITHUB_ORG}/${APP_NAME}/releases/latest | \
+      grep tag_name | \
+      awk -F ': "' '{ print $2 }' | \
+      awk -F '",' '{ print $1 }')
+
+    App_Blue
+  fi
+}
+
 function hash {
   git rev-parse --short HEAD
 }
@@ -250,13 +293,13 @@ function ci {
 # DOCKER
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 function lint {
-  docker_image="redcoolbeans/dockerlint"
+  docker_img="redcoolbeans/dockerlint"
 
   docker run -it --rm \
     -v $(pwd)/Dockerfile:/Dockerfile:ro \
-    ${docker_image}
+    ${docker_img}
 }
-function linthado {
+function lint_hado_wip {
 # ToDo
   docker run --rm hadolint/hadolint:v1.16.3-4-gc7f877d hadolint --version && echo;
 
@@ -310,14 +353,14 @@ function App_input2_rule {
 # ensure the second attribute is not empty to continue
   if [[ "${input_2}" == "not-set" ]]; then
     my_message="You must provide a valid attribute!" App_Pink
-    App_stop
+    App_Stop
   fi
 }
 function App_input3_rule {
 # ensure the third attribute is not empty to continue
   if [[ "${input_3}" == "not-set" ]]; then
     my_message="You must provide a valid attribute!" App_Pink
-    App_stop
+    App_Stop
   fi
 }
 
@@ -398,7 +441,7 @@ Based on this [template](https://gist.github.com/pascalandy/af709db02d3fe132a3e6
 
 EOF
 }
-function add_dockerfile {
+function add_dockerignore {
 # add dockerignore
 
 cat << EOF > .dockerignore_template
@@ -419,18 +462,18 @@ cat << EOF > Dockerfile_template
 
 # Those vars are used broadly outside this very Dockerfile
 # Github Action CI and release script (./utility.sh) is consuming variables from here.
-ARG APP_NAME="placeholder"
-ARG VERSION="0.0"
+
+ARG VERSION="notset"
+ARG APP_NAME="notset"
+ARG GIT_PROJECT_NAME="notset-in-docker"
+#
+ARG ALPINE_VERSION="3.10"
+ARG USER="notset"
 #
 ARG DOCKERHUB_USER="devmtl"
 ARG GITHUB_USER="firepress"
 ARG GITHUB_ORG="firepress-org"
 ARG GITHUB_REGISTRY="registry"
-ARG GIT_REPO_URL="https://github.com/firepress-org/placeholder"
-#
-ARG GIT_REPO_SOURCE="none"
-ARG USER="none"
-ARG ALPINE_VERSION="none"
 
 EOF
 }
@@ -546,7 +589,8 @@ TheVolumeSettingsFolder
 EOF
 }
 
-function App_stop {
+function App_Stop {
+  my_message="Exit 1. Bye bye." App_Pink && sleep 1 && \
   echo && exit 1
 }
 
@@ -610,7 +654,7 @@ function main() {
   if [[ -z "$1" ]]; then    #if empty
     clear
     my_message="You must provide at least one attribute." App_Pink
-    App_stop
+    App_Stop
   else
     input_1=$1
   fi
