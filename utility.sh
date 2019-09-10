@@ -20,31 +20,9 @@ set -o pipefail         # Use last non-zero exit code in a pipeline
 # Git
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 
-function hash {
-  git rev-parse --short HEAD
-}
-function outmaster {
-  git checkout master
-}
-function outedge {
-  git checkout edge
-}
-function stat {
-  git status
-}
-function diff {
-  check && echo
-  git diff
-}
-function wip_bisect {
-  echo "todo"
-}
-function ci-status {
-  hub ci-status -v $(git rev-parse HEAD)
-}
 function push {
-# commit all
-  App_is_input2_empty
+# commit & push all changes
+  App_input2_rule
 
   git status && \
   git add -A && \
@@ -55,11 +33,31 @@ function push {
 function log {
   git --no-pager log --decorate=short --pretty=oneline -n25
 }
+function rbedge {
+# think rebase_edge_from_master
+
+  if [[ $(git status | grep -c "nothing to commit") == "1" ]]; then
+    echo "good, nothing to commit" | 2>/dev/null
+    git checkout edge
+    git pull origin edge
+    git rebase master
+    git push
+    hash_edge_is=$(git rev-parse --short HEAD)
+    #
+    git checkout master
+    hash_master_is=$(git rev-parse --short HEAD)
+    git checkout edge
+    my_message="Diligence: ${hash_master_is} | ${hash_master_is} (master vs edge should be the same)" App_Blue
+
+  else
+    my_message="You must push your commit(s) before doing a rebase." App_Pink
+  fi
+}
 function sq {
 # squash
 
-  App_is_input2_empty
-  App_is_input3_empty
+  App_input2_rule
+  App_input3_rule
 
   backwards_steps="${input_2}"
   git_message="${input_3}"
@@ -97,28 +95,63 @@ function rbmaster {
     my_message="You must push your commit(s) before doing a rebase." App_Pink
   fi
 }
-function rbedge {
-# think rebase_edge_from_master
+function cl_update {
+# update changelog
 
-  if [[ $(git status | grep -c "nothing to commit") == "1" ]]; then
-    echo "good, nothing to commit" | 2>/dev/null
-    git checkout edge
-    git pull origin edge
-    git rebase master
-    git push
-    hash_edge_is=$(git rev-parse --short HEAD)
-    #
-    git checkout master
-    hash_master_is=$(git rev-parse --short HEAD)
-    git checkout edge
-    my_message="Diligence: ${hash_master_is} | ${hash_master_is} (master vs edge should be the same)" App_Blue
+  # is expecting a version
+  App_input2_rule
 
-  else
-    my_message="You must push your commit(s) before doing a rebase." App_Pink
-  fi
+  # Prompt a warning
+  min=1 max=4 message="WARNING: are your commits clean and squashed?"
+  for ACTION in $(seq ${min} ${max}); do
+    echo -e "${col_pink} ${message} ${col_pink}" && sleep 0.4 && clear && \
+    echo -e "${col_blue} ${message} ${col_blue}" && sleep 0.4 && clear
+  done
+
+  # build the message to insert in the CHANGELOG
+  mkdir -p ~/temp && rm ~/temp/tmpfile || true
+
+  git_message="$(git --no-pager log --abbrev-commit --decorate=short --pretty=oneline -n25 | \
+    awk '/HEAD ->/{flag=1} /tag:/{flag=0} flag' | \
+    sed -e 's/([^()]*)//g' | \
+    awk '$1=$1')"
+
+  echo -e "" > ~/temp/tmpfile
+  echo -e "## ${input_2}" >> ~/temp/tmpfile
+  echo -e "### ⚡️ Updates" >> ~/temp/tmpfile
+  echo -e "${git_message}" >> ~/temp/tmpfile
+  bottle="$(cat ~/temp/tmpfile)"
+  rm ~/temp/tmpfile || true
+  # Insert our relase notes after pattern "# Release"
+  awk -vbottle="$bottle" '/# Releases/{print;print bottle;next}1' CHANGELOG.md > ~/temp/tmpfile
+  cat ~/temp/tmpfile | awk 'NF > 0 {blank=0} NF == 0 {blank++} blank < 2' > CHANGELOG.md
+  rm ~/temp/tmpfile || true
+  my_message="Done! Manually edit your CHANGELOG if needed" App_Blue
 }
-function pushcl {
+function cl_push {
 # push changelog
+# powerfull as it combines: tag + release + rbedge
+
+  # is expecting a version
+  App_input2_rule
+
+  # Prompt a warning
+  min=1 max=4 message="WARNING: is CHANGELOG.md is updated using /cl_update/"
+  for ACTION in $(seq ${min} ${max}); do
+    echo -e "${col_pink} ${message} ${col_pink}" && sleep 0.4 && clear && \
+    echo -e "${col_blue} ${message} ${col_blue}" && sleep 0.4 && clear
+  done
+
+  currentBranch=$(git rev-parse --abbrev-ref HEAD)
+  if [[ "${currentBranch}" == "master" ]]; then
+    tag_version="${input_2}"
+
+    tag
+    release
+    rbedge
+  else
+    my_message="You must be a master branch." App_Pink
+  fi
 
 # Use case: we just updated the CAHNGELOG.md file
 # Next, we want to:
@@ -126,67 +159,40 @@ function pushcl {
   #tag the commit
   #release on github
   #rbedge
-
-  App_is_input2_empty
-
-  currentBranch=$(git rev-parse --abbrev-ref HEAD)
-  if [[ "${currentBranch}" == "master" ]]; then
-
-    tag_version="${input_2}"
-
-    version
-    release
-    rbedge
-
-  else
-    my_message="You must be a master branch." App_Pink
-  fi
-
 }
-function version {
+function tag {
+# is a sub fct of cl_push
 # tag
-  
-  # what it does:
-    # update version in Dockerfile
-    # save the commit
-    # tag version on the latest commit
-    # push tag to remote
 
-  App_is_input2_empty
+  App_input2_rule
 
-  currentBranch=$(git rev-parse --abbrev-ref HEAD)
-  if [[ "${currentBranch}" == "master" ]]; then
+  tag_version="${input_2}"
 
-    tag_version="${input_2}"
+  # update tag within the Dockerfile without "-r1" "-r2"
+  ver_in_dockerfile=$(echo $tag_version | sed 's/-r.*//g')
+  sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"$ver_in_dockerfile\"/" Dockerfile 
 
-    # Prompt a warning
-    min=1 max=4 message="WARNING: CHANGELOG.md is updated??"
-    for ACTION in $(seq ${min} ${max}); do
-      echo -e "${col_pink} ${message} ${col_pink}" && sleep 0.4 && clear && \
-      echo -e "${col_blue} ${message} ${col_blue}" && sleep 0.4 && clear
-    done
+  git add . && \
+  git commit -m "Updated to version: $tag_version" && \
+  git push && \
+  sleep 1 && \
+  # push tag
+  git tag ${tag_version} && \
+  git push --tags
 
-    # update version within the Dockerfile
-    # We don't want to have "-r1" "-r2" etc within the Dockerfile
-    ver_in_dockerfile=$(echo $tag_version | sed 's/-r.*//g')
-    sed -i '' "s/^ARG VERSION=.*$/ARG VERSION=\"$ver_in_dockerfile\"/" Dockerfile 
-
-    git add . && \
-    git commit -m "Updated to version: $tag_version" && \
-    git push && \
-    sleep 1 && \
-    # push tag
-    git tag ${tag_version} && \
-    git push --tags
-  else
-    my_message="You must be a master branch." App_Pink
-  fi
+# what it does:
+  # update tag in Dockerfile
+  # save the commit
+  # tag on the latest commit
+  # push tag to remote
 }
 function release {
-  # ensure that 'version' has tag the latest commit
-  # then, release on github
+# is a sub fct of cl_push
 
-  App_is_input2_empty
+# ensure that 'version' has tag the latest commit
+# then, release on github
+
+  App_input2_rule
 
   currentBranch=$(git rev-parse --abbrev-ref HEAD)
   if [[ "${currentBranch}" == "master" ]]; then
@@ -194,7 +200,7 @@ function release {
     first_name_author=$(git log | awk '/Author:/' | head -n1 | awk '{print $2}')
     tag_version="${input_2}"
     git_repo_url=$(cat Dockerfile | grep GIT_REPO_URL= | head -n 1 | grep -o '".*"' | sed 's/"//g')
-    release_message1="Refer to [CHANGELOG.md](${git_repo_url}/blob/master/CHANGELOG.md) for details about this release."
+    release_message1="Refer to [CHANGELOG.md](./CHANGELOG.md) for details about this release."
     release_message2="This release was packaged and published by using <./utility.sh release>."
     release_message3="Enjoy!<br>${first_name_author}"
 
@@ -220,6 +226,25 @@ function release {
     my_message="You must be a master branch." App_Pink
   fi
 }
+function hash {
+  git rev-parse --short HEAD
+}
+function outmaster {
+  git checkout master
+}
+function outedge {
+  git checkout edge
+}
+function stat {
+  git status
+}
+function diff {
+  check && echo
+  git diff
+}
+function ci {
+  hub ci-status -v $(git rev-parse HEAD)
+}
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 # DOCKER
@@ -231,7 +256,17 @@ function lint {
     -v $(pwd)/Dockerfile:/Dockerfile:ro \
     ${docker_image}
 }
+function linthado {
+# ToDo
+  docker run --rm hadolint/hadolint:v1.16.3-4-gc7f877d hadolint --version && echo;
 
+  docker run --rm -i hadolint/hadolint:v1.16.3-4-gc7f877d hadolint \
+    --ignore DL3000 \
+    - < Dockerfile && \
+
+  echo && \
+  docker run -v `pwd`/Dockerfile:/Dockerfile replicated/dockerfilelint /Dockerfile
+}
 
 ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ### ###
 # OTHER
@@ -267,18 +302,18 @@ function test {
 
 function which {
   # list, show which functions are available
-  clear
+  clear && echo && \
   cat utility.sh | awk '/function /' | awk '{print $2}' | sort -k2 -n | sed '/App_/d' | sed '/main/d' | sed '/utility/d'
 }
 
-function App_is_input2_empty {
+function App_input2_rule {
 # ensure the second attribute is not empty to continue
   if [[ "${input_2}" == "not-set" ]]; then
     my_message="You must provide a valid attribute!" App_Pink
     App_stop
   fi
 }
-function App_is_input3_empty {
+function App_input3_rule {
 # ensure the third attribute is not empty to continue
   if [[ "${input_3}" == "not-set" ]]; then
     my_message="You must provide a valid attribute!" App_Pink
@@ -312,25 +347,97 @@ function example_figlet {
 
   docker run --rm ${docker_image} ${message}
 }
-function passfull {
+function passgen {
   grp1=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c11-14) && \
   grp2=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c2-25) && \
   grp3=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c21-24) && \
   clear && \
   echo "${grp1}_${grp2}_${grp3}"
 }
-function passfull_long {
+function passgen_long {
   grp1=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c11-14) && \
   grp2=$(openssl rand -base64 48 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c2-50) && \
   grp3=$(openssl rand -base64 32 | sed 's/[^123456789ABCDEFGHJKLMNPQRSTUVWXYZabcdefghjkmnpqrstuvwxyz]//g' | cut -c21-24) && \
   clear && \
   echo "${grp1}_${grp2}_${grp3}"
 }
+function add_license {
+# add changelog
 
-function gitignore {
-# set and overides .gitignore
+cat << EOF > LICENSE_template
+Copyright (C) 2019
+by Pascal Andy | https://pascalandy.com/blog/now/
 
-cat <<EOF > .gitignore
+Project:
+https://github.com/firepress-org/PLACEHOLDER
+
+Find the GNU General Public License V3 at:
+https://github.com/pascalandy/GNU-GENERAL-PUBLIC-LICENSE/blob/master/LICENSE.md
+
+Basically, you have to credit the author AND keep the code free and open source.
+
+EOF
+}
+function add_changelog {
+# add changelog
+
+cat << EOF > CHANGELOG_template.md
+### About this changelog
+
+Based on this [template](https://gist.github.com/pascalandy/af709db02d3fe132a3e6f1c11b934fe4). Release process at FirePress ([blog post](https://firepress.org/en/software-and-ghost-updates/)). Based on [Keep a Changelog](https://keepachangelog.com/en/1.0.0/) and this project adheres to [Semantic Versioning](https://semver.org/spec/v2.0.0.html).
+
+### Status template
+
+- ⚡️ Updates
+- 🚀 New feat.
+- 🐛 Fix bug
+- 🛑 Removed
+- 🔑 Security
+
+# Releases
+
+EOF
+}
+function add_dockerfile {
+# add dockerignore
+
+cat << EOF > .dockerignore_template
+.cache
+coverage
+dist
+node_modules
+npm-debug
+.git
+
+EOF
+}
+function add_dockerfile {
+# add changelog
+
+cat << EOF > Dockerfile_template
+# This is a fake Dockerfile.
+
+# Those vars are used broadly outside this very Dockerfile
+# Github Action CI and release script (./utility.sh) is consuming variables from here.
+ARG APP_NAME="placeholder"
+ARG VERSION="0.0"
+#
+ARG DOCKERHUB_USER="devmtl"
+ARG GITHUB_USER="firepress"
+ARG GITHUB_ORG="firepress-org"
+ARG GITHUB_REGISTRY="registry"
+ARG GIT_REPO_URL="https://github.com/firepress-org/placeholder"
+#
+ARG GIT_REPO_SOURCE="none"
+ARG USER="none"
+ARG ALPINE_VERSION="none"
+
+EOF
+}
+function add_gitignore {
+# add gitignore
+
+cat <<EOF > .gitignore_template
 # Files
 ############
 test
@@ -435,6 +542,7 @@ TheVolumeSettingsFolder
 .FBCIndex
 .FBCSemaphoreFile
 .FBCLockFolder
+
 EOF
 }
 
