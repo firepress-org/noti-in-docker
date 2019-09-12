@@ -15,6 +15,11 @@
 
 # Releases
 
+## 3.3.0-r0
+### ⚡️ Updates
+- 63335f8 Updated to version: 3.3.0 / squashed
+- aee041a Add utility.sh v0.8.7
+
 ## 3.2.0-r7
 ### ⚡️ Updates
 - 6e28f2d Add new var to fix logic where APP_NAME is not the same as the Github repo
