@@ -24,7 +24,7 @@
 
 ## What is this?
 
-**noti** in a docker container along a CI (continuous integration) to build the Docker image.
+**noti** in a docker container along a CI (continuous integration) to build the Docker image. 
 
 ## Features
 
