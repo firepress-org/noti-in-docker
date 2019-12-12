@@ -1,5 +1,5 @@
 # Those are required by Github Action CI
-ARG VERSION="3.3.0"
+ARG VERSION="3.4.0"
 ARG APP_NAME="noti"
 ARG GIT_PROJECT_NAME="noti-in-docker"
 #
