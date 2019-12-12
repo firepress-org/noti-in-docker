@@ -15,6 +15,11 @@
 
 # Releases
 
+## 3.4.0
+### ⚡️ Updates
+- f66efa6 Updated to version: 3.4.0
+- b81bd1d rm utility
+
 ## 3.3.0-r0
 ### ⚡️ Updates
 - 63335f8 Updated to version: 3.3.0 / squashed
