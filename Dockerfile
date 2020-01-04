@@ -102,6 +102,8 @@ RUN set -eux && apk --update --no-cache add \
     addgroup -S grp_"${USER}" && \
     adduser -S "${USER}" -G grp_"${USER}"
 
+ENV TERM=xterm
+
 COPY --from=gobuilder --chown="${USER}":grp_"${USER}" /usr/local/bin/"${APP_NAME}" /usr/local/bin/"${APP_NAME}"
 WORKDIR /usr/local/bin
 USER "${USER}"
