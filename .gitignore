@@ -1,6 +1,7 @@
 # Files
 ############
-test
+.bashcheck.sh
+utility.sh
 .cache
 coverage
 dist
@@ -102,3 +103,4 @@ TheVolumeSettingsFolder
 .FBCIndex
 .FBCSemaphoreFile
 .FBCLockFolder
+
